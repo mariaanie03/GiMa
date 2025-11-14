@@ -1,0 +1,160 @@
+@import url('_comum.css');
+        /* Estilos específicos para a página do carrinho */
+        main {
+            padding: 20px 5%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        .carrinho-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .carrinho-produtos {
+            flex: 2; /* Ocupa 2/3 do espaço */
+            min-width: 400px;
+        }
+
+        .carrinho-resumo {
+            flex: 1; /* Ocupa 1/3 do espaço */
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            height: fit-content; /* Ajusta a altura ao conteúdo */
+        }
+
+        .carrinho-resumo h2 {
+            margin-top: 0;
+        }
+
+        .resumo-linha {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        #resumo-total {
+            font-weight: bold;
+            font-size: 1.2em;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-checkout {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn-checkout:hover {
+            background-color: #218838;
+        }
+
+        .produto-carrinho {
+            display: flex;
+            gap: 15px;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            align-items: center;
+        }
+
+        .produto-carrinho img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .produto-info {
+            flex-grow: 1;
+        }
+        .produto-info h3 { margin: 0 0 10px; }
+
+        .produto-qtd {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .produto-qtd button {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+        .produto-remover button {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        /* ESTADO DE CARRINHO VAZIO */
+        #carrinho-vazio {
+            text-align: center;
+            padding: 50px;
+            width: 100%;
+        }
+        #carrinho-vazio h2 { font-size: 1.8em; }
+        .btn-continuar-comprando {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn-continuar-comprando:hover {
+            background-color: #0056b3;
+        }
+
+        /* Garante que o container principal use Flexbox para alinhar os filhos */
+.carrinho-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os itens quebrem para a linha de baixo em telas pequenas */
+    gap: 20px; /* Espaçamento entre a lista de produtos e o resumo */
+    padding: 20px;
+    align-items: flex-start; /* Alinha os itens no topo */
+}
+
+/* Define que a lista de produtos deve ocupar o espaço disponível */
+.carrinho-produtos {
+    flex: 2; /* Ocupa 2/3 do espaço */
+    min-width: 300px; /* Largura mínima antes de quebrar a linha */
+}
+
+/* Define um tamanho fixo para o resumo do pedido */
+.carrinho-resumo {
+    flex: 1; /* Ocupa 1/3 do espaço */
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    min-width: 280px;
+}
+
+/* Estilizando os botões e links dentro do resumo para ficarem mais bonitos */
+.carrinho-resumo .btn-checkout {
+    display: block; /* Faz o botão ocupar a largura toda */
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745; /* Verde */
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+    border: none;
+}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crie sua Conta - Personalized Gift Shop</title>
+    <link rel="stylesheet" href="css/pag-cadastro.css">
+</head>
+<body>
+    <header>
+       <div class="logo"><img src="imagens/logomarca V3.png" alt=""></div>
+        <div class="site-name">Personalized Gift Shop</div>
+        <div class="header-actions">
+            <form action="resultados.html" method="GET">
+                <input type="search" name="q" placeholder="Buscar..." required>
+                <button type="submit" aria-label="Buscar">🔍</button>
+            </form>
+<a href="carrinho.html" class="cart-icon" aria-label="Carrinho de Compras">
+    🛒<span id="cart-count" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; vertical-align: top; display: none;">0</span>
+</a>        </div>
+    </header>
+
+    <nav class="main-nav">
+        <ul>
+            <li><a href="index.html" class="nav-link">Início</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="register-section" class="content-section active">
+            <div class="login-form-container">
+                
+                <!-- O formulário agora não tem 'action' nem 'method' -->
+                <form id="registration-form">
+                    <fieldset>
+                        <legend>Dados Pessoais</legend>
+                        <div>
+                            <label for="nome-completo">Nome Completo:</label>
+                            <input type="text" id="nome-completo" name="nome-completo" required placeholder="Seu nome completo">
+                        </div>
+                        <div class="form-row">
+                            <div>
+                                <label for="email">E-mail:</label>
+                                <input type="email" id="email" name="email" required placeholder="seuemail@exemplo.com">
+                            </div>
+                            <div>
+                                <label for="telefone">Telefone / Celular:</label>
+                                <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Endereço de Entrega</legend>
+                        <div>
+                            <label for="cep">CEP:</label>
+                            <input type="text" id="cep" name="cep" required placeholder="Apenas números">
+                        </div>
+                        <div class="form-row">
+                             <div>
+                                <label for="logradouro">Rua / Avenida:</label>
+                                <input type="text" id="logradouro" name="logradouro" required>
+                            </div>
+                            <div>
+                                <label for="numero">Número:</label>
+                                <input type="text" id="numero" name="numero" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="complemento">Complemento (Opcional):</label>
+                            <input type="text" id="complemento" name="complemento" placeholder="Apto, Bloco, Casa">
+                        </div>
+                         <div class="form-row">
+                            <div>
+                                <label for="bairro">Bairro:</label>
+                                <input type="text" id="bairro" name="bairro" required>
+                            </div>
+                            <div>
+                                <label for="cidade">Cidade:</label>
+                                <input type="text" id="cidade" name="cidade" required>
+                            </div>
+                            <div>
+                                <label for="estado">Estado:</label>
+                                <input type="text" id="estado" name="estado" required>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Senha de Acesso</legend>
+                        <div class="form-row">
+                            <div>
+                                <label for="senha">Crie uma Senha:</label>
+                                <input type="password" id="senha" name="senha" required minlength="6" placeholder="Mínimo 6 caracteres">
+                            </div>
+                            <div>
+                                <label for="confirmar-senha">Confirme a Senha:</label>
+                                <input type="password" id="confirmar-senha" name="confirmar-senha" required>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                     <fieldset>
+                        <legend>Termos e Condições</legend>
+                        <div class="terms-container">
+                             <input type="checkbox" id="termos" name="termos" required>
+                           <!-- No campo de termos, atualize o link para: -->
+<label for="termos">Eu li e aceito os <a href="termos.html" target="_blank">Termos e Condições</a> do site.</label>
+                        </div>
+                    </fieldset>
+                    
+                    <button type="submit">Finalizar Cadastro</button>
+                </form>
+
+            </div>
+        </section>
+    </main>
+
+       <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4>Institucional</h4>
+                <ul>
+                    <li><a href="index.html?section=about">Sobre Nós</a></li>
+                    <li><a href="termos.html">Termos e Condições</a></li>
+                    <li><a href="privacidade.html">Política de Privacidade</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Atendimento</h4>
+                <ul>
+                    <li><a href="mailto:contato@personalizedgiftshop.com.br">contato@personalizedgiftshop.com.br</a></li>
+                    <li><a href="tel:+5511999999999">(11) 99999-9999</a></li>
+                    <li>Seg. à Sex. das 9h às 18h</li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Redes Sociais</h4>
+                <div class="social-icons">
+                    <a href="#" aria-label="Instagram">IG</a>
+                    <a href="#" aria-label="Facebook">FB</a>
+                    <a href="#" aria-label="Pinterest">PI</a>
+                    <a href="#" aria-label="Tik Tok">TK</a>
+                    <a href="#" aria-label="Twitter">X</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Newsletter</h4>
+                <p>Receba novidades e promoções!</p>
+                <form id="newsletter-form">
+                    <input type="email" placeholder="Seu e-mail" required>
+                    <button type="submit">Assinar</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="payment-methods">
+                <p>Formas de Pagamento:</p>
+                <span>PIX</span> <span>VISA</span> <span>MASTERCARD</span> <span>ELO</span>
+            </div>
+            <div class="copyright">
+                <p>© 2025 Personalized Gift Shop - Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script type="module">
+    // Importa o cliente Supabase e o torna globalmente acessível
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    window.myCreateSupabaseClient = createClient;
+</script>
+
+    <!-- Não se esqueça de incluir os scripts do Supabase no index.html e aqui se for o caso -->
+<script type="module" src="js/script.js"></script>
+     <script type="module" src="js/auth.js"></script>
+</body>
+</html>

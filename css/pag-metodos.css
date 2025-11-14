@@ -1,0 +1,327 @@
+@import url('_comum.css');
+
+.metodos-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.metodos-container h1 {
+    text-align: center;
+    color: #357ABD;
+    margin-bottom: 30px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+/* SEÇÃO INFORMATIVA SUPERIOR */
+.info-metodos {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.metodo-item {
+    flex: 1;
+}
+
+.metodo-item h2 {
+    color: #4A90E2;
+    margin-bottom: 8px;
+    font-size: 1.2em;
+}
+
+.metodo-item p {
+    font-size: 0.9em;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* NOVA CENTRAL DE PERSONALIZAÇÃO */
+.central-personalizacao {
+    border-top: 2px solid #f0f0f0;
+    padding-top: 30px;
+}
+
+.central-personalizacao h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.area-personalizacao {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    background-color: #fcfcfc;
+}
+
+.area-personalizacao legend {
+    padding: 0 10px;
+    font-weight: bold;
+    color: #357ABD;
+    font-size: 1.1em;
+}
+
+.area-personalizacao p {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 0.95em;
+    color: #555;
+}
+
+/* Estilos para Opção 1 */
+.ferramentas-criacao {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-upload {
+    background-color: #5D9CEC;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+.btn-upload:hover {
+    background-color: #4A80D3;
+}
+.escondido {
+    display: none;
+}
+
+#abrir-editor-desenho {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+#abrir-editor-desenho:hover {
+    background-color: #e0e0e0;
+}
+
+/* Estilos para Galeria (Opção 2) */
+#galeria-artes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.arte-galeria {
+    width: 100%;
+    height: auto;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.arte-galeria:hover {
+    transform: scale(1.05);
+    border-color: #4A90E2;
+}
+
+.arte-galeria.selecionada {
+    border: 3px solid #f39c12;
+    box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+}
+
+/* Estilos para Customização (Opção 3) */
+.customizacao-final {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+#preview-arte-selecionada {
+    flex-basis: 120px;
+    height: 120px;
+    border: 1px dashed #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 0.8em;
+    color: #888;
+    padding: 5px;
+    background-color: #fff;
+}
+#preview-arte-selecionada img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.campo-texto {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.campo-texto label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+.campo-texto input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+.campo-texto button {
+    align-self: flex-end;
+    padding: 8px 15px;
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* BOTÃO FINAL */
+#btn-confirmar-personalizacao {
+    width: 100%;
+    padding: 15px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+#btn-confirmar-personalizacao:hover {
+    background-color: #c0392b;
+}
+
+.voltar-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #4A90E2;
+    text-decoration: none;
+    font-weight: bold;
+}
+.voltar-link:hover {
+    text-decoration: underline;
+}
+
+
+
+
+        /* Estilos gerais da página */
+        .central-personalizacao {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .area-personalizacao { 
+            width: 100%; 
+            max-width: 600px; 
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+        .area-personalizacao legend {
+            font-weight: bold;
+            font-size: 1.1em;
+            padding: 0 10px;
+        }
+
+        /* Estilos do Editor de Desenho */
+        #editor-desenho-container {
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 15px;
+            margin-top: 20px; 
+            border: 1px solid #e0e0e0; 
+            padding: 20px;
+            border-radius: 8px; 
+            background-color: #f9f9f9; 
+            width: fit-content;
+        }
+        .drawing-tools {
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+            justify-content: center;
+        }
+        .tool-btn {
+            cursor: pointer; 
+            border: 2px solid transparent; 
+            border-radius: 5px;
+            padding: 8px; 
+            transition: all 0.2s ease; 
+            background-color: #f0f0f0;
+            font-size: 1.2em;
+        }
+        .tool-btn:disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed; 
+        }
+        .tool-btn.active { 
+            border-color: #007bff; 
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+        }
+        .color-palette { 
+            display: flex; 
+            gap: 5px; 
+        }
+        .color-swatch {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%; 
+            cursor: pointer;
+            border: 2px solid transparent; 
+            transition: all 0.2s ease;
+        }
+        .color-swatch.active { 
+            border-color: #333; 
+            transform: scale(1.15); 
+            box-shadow: 0 0 4px rgba(0,0,0,0.4); 
+        }
+        #canvas-personalizacao {
+            border: 1px solid #ccc; 
+            background-color: #fff; 
+            cursor: default;
+        }
+        
+        /* Estilos para Ferramentas de Texto */
+        #text-tools {
+            display: none; /* Inicia oculto */
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        #text-tools select, #text-tools input {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        #text-tools label {
+            font-size: 0.9em;
+            margin-right: -5px;
+        }
+ 

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Carrinho - Personalized Gift Shop</title>
+    <link rel="stylesheet" href="css/pag-carrinho.css">
+    <!-- Se você tem um CSS principal, adicione o link aqui -->
+    <!-- <link rel="stylesheet" href="css/style.css"> -->
+   
+</head>
+<body>
+    <header>
+        <div class="logo"><img src="imagens/logomarca V3.png" alt="Logo Personalized Gift Shop"></div>
+        <div class="site-name">Personalized Gift Shop</div>
+        <div class="header-actions">
+            <form action="resultados.html" method="GET">
+                <input type="search" name="q" placeholder="Buscar..." required>
+                <button type="submit" aria-label="Buscar">🔍</button>
+            </form>
+            <!-- Ícone do carrinho agora é um link -->
+            <a href="carrinho.html" class="cart-icon" aria-label="Carrinho de Compras">🛒<span id="cart-count">0</span></a>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <ul>
+            <li><a href="index.html" class="nav-link">Início</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h1>Meu Carrinho de Compras</h1>
+
+        <!-- Container para o carrinho com itens -->
+        <div id="carrinho-cheio" class="carrinho-container">
+            <div id="lista-produtos-carrinho" class="carrinho-produtos">
+                <!-- Produtos serão inseridos aqui pelo JavaScript -->
+            </div>
+
+            <div id="resumo-carrinho" class="carrinho-resumo">
+                <h2>Resumo do Pedido</h2>
+                <div class="resumo-linha">
+                    <span>Subtotal:</span>
+                    <span id="subtotal-valor">R$ 0,00</span>
+                </div>
+                <div class="resumo-linha">
+                    <span>Frete:</span>
+                    <span>R$ 15,00</span> <!-- Valor fixo para exemplo -->
+                </div>
+                <div id="resumo-total" class="resumo-linha">
+                    <span>Total:</span>
+                    <span id="total-valor">R$ 15,00</span>
+                </div>
+                <a href="#" class="btn-checkout">Finalizar Compra</a>
+            </div>
+        </div>
+
+        <!-- Container para o carrinho vazio -->
+        <div id="carrinho-vazio" style="display: none;">
+            <h2>Seu carrinho está vazio.</h2>
+            <p>Adicione produtos para vê-los aqui.</p>
+            <a href="index.html" class="btn-continuar-comprando">Continuar Comprando</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4>Institucional</h4>
+                <ul>
+                    <li><a href="index.html?section=about">Sobre Nós</a></li>
+                    <li><a href="termos.html">Termos e Condições</a></li>
+                    <li><a href="privacidade.html">Política de Privacidade</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Atendimento</h4>
+                <ul>
+                    <li><a href="mailto:contato@personalizedgiftshop.com.br">contato@personalizedgiftshop.com.br</a></li>
+                    <li><a href="tel:+5511999999999">(11) 99999-9999</a></li>
+                    <li>Seg. à Sex. das 9h às 18h</li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Redes Sociais</h4>
+                <div class="social-icons">
+                    <a href="#" aria-label="Instagram">IG</a>
+                    <a href="#" aria-label="Facebook">FB</a>
+                    <a href="#" aria-label="Pinterest">PI</a>
+                    <a href="#" aria-label="Tik Tok">TK</a>
+                    <a href="#" aria-label="Twitter">X</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Newsletter</h4>
+                <p>Receba novidades e promoções!</p>
+                <form id="newsletter-form">
+                    <input type="email" placeholder="Seu e-mail" required>
+                    <button type="submit">Assinar</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="payment-methods">
+                <p>Formas de Pagamento:</p>
+                <span>PIX</span> <span>VISA</span> <span>MASTERCARD</span> <span>ELO</span>
+            </div>
+            <div class="copyright">
+                <p>© 2025 Personalized Gift Shop - Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    <script type="module" src="js/script.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const listaProdutosContainer = document.getElementById('lista-produtos-carrinho');
+        const carrinhoCheioContainer = document.getElementById('carrinho-cheio');
+        const carrinhoVazioContainer = document.getElementById('carrinho-vazio');
+        
+        // Função para obter o carrinho do localStorage
+        const getCarrinho = () => JSON.parse(localStorage.getItem('carrinho')) || [];
+        
+        // Função para salvar o carrinho no localStorage
+        const salvarCarrinho = (carrinho) => localStorage.setItem('carrinho', JSON.stringify(carrinho));
+
+        // Função principal para renderizar o carrinho
+        const renderizarCarrinho = () => {
+            const carrinho = getCarrinho();
+            
+            // Limpa o conteúdo atual
+            listaProdutosContainer.innerHTML = '';
+
+            if (carrinho.length === 0) {
+                carrinhoCheioContainer.style.display = 'none';
+                carrinhoVazioContainer.style.display = 'block';
+                return;
+            }
+
+            carrinhoCheioContainer.style.display = 'flex';
+            carrinhoVazioContainer.style.display = 'none';
+
+            carrinho.forEach(item => {
+                const produtoHTML = `
+                    <div class="produto-carrinho">
+                        <img src="${item.customization || item.image}" alt="${item.name}">
+                        <div class="produto-info">
+                            <h3>${item.name}</h3>
+                            <p>Preço: R$ ${item.price.toFixed(2)}</p>
+                        </div>
+                        <div class="produto-qtd">
+                            <button class="btn-diminuir-qtd" data-id="${item.id}">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="btn-aumentar-qtd" data-id="${item.id}">+</button>
+                        </div>
+                        <div class="produto-remover">
+                            <button class="btn-remover-item" data-id="${item.id}">🗑️</button>
+                        </div>
+                    </div>
+                `;
+                listaProdutosContainer.innerHTML += produtoHTML;
+            });
+            
+            atualizarResumo();
+            atualizarContadorCarrinho();
+        };
+
+        const atualizarResumo = () => {
+            const carrinho = getCarrinho();
+            const subtotal = carrinho.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            const frete = 15.00; // Valor de exemplo
+            const total = subtotal + frete;
+
+            document.getElementById('subtotal-valor').textContent = `R$ ${subtotal.toFixed(2)}`;
+            document.getElementById('total-valor').textContent = `R$ ${total.toFixed(2)}`;
+        };
+        
+        // Função para atualizar o número no ícone do carrinho
+        const atualizarContadorCarrinho = () => {
+            const carrinho = getCarrinho();
+            const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
+            const contador = document.getElementById('cart-count');
+            if(contador) {
+                contador.textContent = totalItens;
+                contador.style.display = totalItens > 0 ? 'inline' : 'none';
+            }
+        };
+
+        // Manipulação de eventos (aumentar, diminuir, remover)
+        listaProdutosContainer.addEventListener('click', (e) => {
+            const target = e.target;
+            const produtoId = target.dataset.id;
+            if (!produtoId) return;
+
+            let carrinho = getCarrinho();
+            const itemIndex = carrinho.findIndex(item => item.id == produtoId);
+            
+            if (itemIndex === -1) return;
+
+            if (target.classList.contains('btn-aumentar-qtd')) {
+                carrinho[itemIndex].quantity++;
+            } else if (target.classList.contains('btn-diminuir-qtd')) {
+                carrinho[itemIndex].quantity--;
+                if (carrinho[itemIndex].quantity <= 0) {
+                    carrinho.splice(itemIndex, 1); // Remove se a quantidade for zero
+                }
+            } else if (target.classList.contains('btn-remover-item')) {
+                carrinho.splice(itemIndex, 1); // Remove o item
+            }
+            
+            salvarCarrinho(carrinho);
+            renderizarCarrinho();
+        });
+        
+        // Renderiza o carrinho ao carregar a página
+        renderizarCarrinho();
+    });
+    </script>
+</body>
+</html>
+
+<!-- Adicionar no final do body de produtos.html -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const btnAdicionar = document.getElementById('btn-add-carrinho');
+
+    btnAdicionar.addEventListener('click', () => {
+        // Obter o carrinho atual ou criar um novo
+        const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+        
+        // Pega a personalização, se existir
+        const personalizacao = localStorage.getItem('produtoPersonalizado');
+
+        // --- CRIE O OBJETO DO PRODUTO AQUI ---
+        // Estes dados devem ser dinâmicos, vindos da sua página de produto
+        const produto = {
+            id: 'prod-001', // Use um ID único para cada produto
+            name: document.getElementById('produto-nome').textContent,
+            price: parseFloat(document.getElementById('produto-preco').textContent.replace('R$ ', '').replace(',', '.')),
+            image: document.getElementById('produto-imagem').src,
+            quantity: 1,
+            customization: personalizacao || null // Adiciona a arte personalizada
+        };
+
+        // Verifica se o produto já está no carrinho
+        const itemExistente = carrinho.find(item => item.id === produto.id && item.customization === produto.customization);
+
+        if (itemExistente) {
+            // Se já existe, apenas aumenta a quantidade
+            itemExistente.quantity++;
+        } else {
+            // Se não existe, adiciona o novo produto
+            carrinho.push(produto);
+        }
+
+        // Salva o carrinho atualizado no localStorage
+        localStorage.setItem('carrinho', JSON.stringify(carrinho));
+        
+        // Limpa a personalização temporária para não aplicá-la ao próximo produto
+        if (personalizacao) {
+            localStorage.removeItem('produtoPersonalizado');
+        }
+
+        // Feedback para o usuário
+        alert(`${produto.name} foi adicionado ao carrinho!`);
+        
+        // Atualiza o contador do ícone do carrinho
+        atualizarContadorCarrinhoHeader();
+    });
+    
+    // Função para atualizar o contador (pode ser colocada em um script.js global)
+    const atualizarContadorCarrinhoHeader = () => {
+        const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+        const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
+        const contador = document.getElementById('cart-count'); // Assumindo que seu header tem esse ID
+        if(contador) {
+            contador.textContent = totalItens;
+            contador.style.display = totalItens > 0 ? 'inline' : 'none';
+        }
+    };
+    
+    // Atualiza o contador ao carregar a página
+    atualizarContadorCarrinhoHeader();
+});
+</script>

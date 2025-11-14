@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos por Categoria - Personalized Gift Shop</title>
+    <link rel="stylesheet" href="css/pag-produtos-por-categoria.css">
+    
+</head>
+<body>
+
+    <header>
+        <div class="logo"><img src="imagens/logomarca V3.png" alt="Logo Personalized Gift Shop"></div>
+        <div class="site-name">Personalized Gift Shop</div>
+        <div class="header-actions">
+            <form id="search-form" action="resultados.html" method="GET">
+                <input type="search" id="search-input" name="q" placeholder="Buscar..." required>
+                <button type="submit" aria-label="Buscar">🔍</button>
+            </form>
+<a href="carrinho.html" class="cart-icon" aria-label="Carrinho de Compras">
+    🛒<span id="cart-count" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; vertical-align: top; display: none;">0</span>
+</a>        </div>
+    </header>
+
+<nav class="main-nav">
+        <ul>
+            <li><a href="index.html" class="nav-link">Início</a></li>
+        
+        </ul>
+    </nav>
+
+    <main>
+        <div class="categoria-container">
+            <h1 id="categoria-titulo" class="categoria-titulo">Carregando...</h1>
+            
+            <div id="produtos-grid" class="produtos-grid">
+                <!-- Os produtos serão carregados via JavaScript -->
+            </div>
+            
+            <a href="index.html" class="voltar-link">← Voltar para a Página Inicial</a>
+        </div>
+    </main>
+  <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4>Institucional</h4>
+                <ul>
+                    <li><a href="index.html?section=about">Sobre Nós</a></li>
+                    <li><a href="termos.html">Termos e Condições</a></li>
+                    <li><a href="privacidade.html">Política de Privacidade</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Atendimento</h4>
+                <ul>
+                    <li><a href="mailto:contato@personalizedgiftshop.com.br">contato@personalizedgiftshop.com.br</a></li>
+                    <li><a href="tel:+5511999999999">(11) 99999-9999</a></li>
+                    <li>Seg. à Sex. das 9h às 18h</li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Redes Sociais</h4>
+                <div class="social-icons">
+                    <a href="#" aria-label="Instagram">IG</a>
+                    <a href="#" aria-label="Facebook">FB</a>
+                    <a href="#" aria-label="Pinterest">PI</a>
+                    <a href="#" aria-label="Tik Tok">TK</a>
+                    <a href="#" aria-label="Twitter">X</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Newsletter</h4>
+                <p>Receba novidades e promoções!</p>
+                <form id="newsletter-form">
+                    <input type="email" placeholder="Seu e-mail" required>
+                    <button type="submit">Assinar</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="payment-methods">
+                <p>Formas de Pagamento:</p>
+                <span>PIX</span> <span>VISA</span> <span>MASTERCARD</span> <span>ELO</span>
+            </div>
+            <div class="copyright">
+                <p>© 2025 Personalized Gift Shop - Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    <script type="module" src="js/supabaseClient.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/script.js"></script>
+</body>
+</html>

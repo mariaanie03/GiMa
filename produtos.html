@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto - Personalized Gift Shop</title>
+    <link rel="stylesheet" href="css/pag-produtos.css">
+</head>
+<body>
+    <header>
+        <div class="logo"><img src="imagens/logomarca V3.png" alt=""></div>
+        <div class="site-name">Personalized Gift Shop</div>
+        <div class="header-actions">
+            <form id="search-form" action="resultados.html" method="GET">
+                <input type="search" id="search-input" name="q" placeholder="Buscar..." required>
+                <button type="submit" aria-label="Buscar">🔍</button>
+            </form>
+<a href="carrinho.html" class="cart-icon" aria-label="Carrinho de Compras">
+    🛒<span id="cart-count" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; vertical-align: top; display: none;">0</span>
+</a>        </div>
+    </header>
+
+    <nav class="main-nav">
+        <ul>
+            <li><a href="index.html" class="nav-link">Início</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div id="detalhe-produto-container">
+            <div id="produto-imagem-container">
+                <img id="produto-imagem" src="https://via.placeholder.com/400x400?text=Carregando..." alt="Imagem do produto">
+            </div>
+            <div id="produto-info-container">
+                <h1 id="produto-nome">Carregando nome...</h1>
+                <p id="produto-preco">R$ --,--</p>
+                <p id="produto-descricao">Descrição do produto aparecerá aqui...</p>
+                
+                <button id="btn-add-carrinho" class="btn-produto-acao">Adicionar ao Carrinho</button>
+                
+                <!-- O BOTÃO AGORA É UM LINK (<a>) PARA NAVEGAÇÃO -->
+                <a id="btn-personalizar" class="btn-produto-acao" href="metodos-personalizacao.html">Personalizar Produto</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <!-- O conteúdo do footer permanece o mesmo -->
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4>Institucional</h4>
+                <ul>
+                    <li><a href="index.html?section=about">Sobre Nós</a></li>
+                    <li><a href="termos.html">Termos e Condições</a></li>
+                    <li><a href="privacidade.html">Política de Privacidade</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Atendimento</h4>
+                <ul>
+                    <li><a href="mailto:contato@personalizedgiftshop.com.br">contato@personalizedgiftshop.com.br</a></li>
+                    <li><a href="tel:+5511999999999">(11) 99999-9999</a></li>
+                    <li>Seg. à Sex. das 9h às 18h</li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Redes Sociais</h4>
+                <div class="social-icons">
+                    <a href="#" aria-label="Instagram">IG</a>
+                    <a href="#" aria-label="Facebook">FB</a>
+                    <a href="#" aria-label="Pinterest">PI</a>
+                    <a href="#" aria-label="Tik Tok">TK</a>
+                    <a href="#" aria-label="Twitter">X</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Newsletter</h4>
+                <p>Receba novidades e promoções!</p>
+                <form id="newsletter-form">
+                    <input type="email" placeholder="Seu e-mail" required>
+                    <button type="submit">Assinar</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="payment-methods">
+                <p>Formas de Pagamento:</p>
+                <span>PIX</span> <span>VISA</span> <span>MASTERCARD</span> <span>ELO</span>
+            </div>
+            <div class="copyright">
+                <p>© 2025 Personalized Gift Shop - Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+
+<!-- 1. Carrega a conexão com o Supabase PRIMEIRO -->
+<script type="module" src="js/supabaseClient.js"></script>
+
+<!-- 2. Carrega o script principal que usa a conexão -->
+<script type="module" src="js/script.js"></script>
+
+<!-- 3. Carrega a lógica de adicionar ao carrinho -->
+<script type="module">
+document.addEventListener('DOMContentLoaded', () => {
+    const btnAdicionar = document.getElementById('btn-add-carrinho');
+    const urlParams = new URLSearchParams(window.location.search);
+    const produtoId = urlParams.get('id');
+
+    if (btnAdicionar && produtoId) {
+        btnAdicionar.addEventListener('click', () => {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const personalizacao = localStorage.getItem('produtoPersonalizado');
+
+            // Pega os dados DEPOIS que a página carregou as informações do produto
+            const nomeProduto = document.getElementById('produto-nome').textContent;
+            const precoProdutoTexto = document.getElementById('produto-preco').textContent;
+
+            // VERIFICAÇÃO DE SEGURANÇA: Não adiciona ao carrinho se os dados não carregaram
+            if (nomeProduto === 'Carregando nome...' || !precoProdutoTexto.includes('R$')) {
+                alert('Erro: Os detalhes do produto ainda não foram carregados. Por favor, aguarde e tente novamente.');
+                return;
+            }
+
+            const produto = {
+                id: produtoId,
+                name: nomeProduto,
+                price: parseFloat(precoProdutoTexto.replace('R$ ', '').replace(',', '.')),
+                image: document.getElementById('produto-imagem').src,
+                quantity: 1,
+                customization: personalizacao || null
+            };
+
+            const itemExistente = carrinho.find(item => item.id === produto.id && item.customization === produto.customization);
+            if (itemExistente) {
+                itemExistente.quantity++;
+            } else {
+                carrinho.push(produto);
+            }
+
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+            if (personalizacao) {
+                localStorage.removeItem('produtoPersonalizado');
+            }
+
+            alert(`"${produto.name}" foi adicionado ao carrinho!`);
+            atualizarContadorCarrinhoHeader();
+        });
+    }
+    
+    const atualizarContadorCarrinhoHeader = () => {
+        const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+        const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
+        const contador = document.getElementById('cart-count');
+        if(contador) {
+            contador.textContent = totalItens;
+            contador.style.display = totalItens > 0 ? 'inline' : 'none';
+        }
+    };
+    
+    atualizarContadorCarrinhoHeader();
+});
+</script>
+
+ <script type="module" src="js/script.js"></script>
+</body>
+</html>

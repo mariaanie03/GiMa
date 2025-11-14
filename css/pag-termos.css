@@ -1,0 +1,63 @@
+@import url('pag-inicial.css');
+        .termos-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .termos-container h1 {
+            text-align: center;
+            color: #357ABD;
+            margin-bottom: 30px;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+        
+        .termos-container h2 {
+            color: #4A90E2;
+            margin: 25px 0 15px 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        
+        .termos-container p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            text-align: justify;
+        }
+        
+        .termos-container ul {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        .termos-container li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .voltar-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #4A90E2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .voltar-link:hover {
+            text-decoration: underline;
+        }
+        
+        .data-atualizacao {
+            text-align: right;
+            font-style: italic;
+            color: #666;
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+
+
+

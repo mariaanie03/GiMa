@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalize seu Produto - Personalized Gift Shop</title>
+    <link rel="stylesheet" href="css/pag-metodos.css">
+    
+   
+</head>
+<body>
+    <header>
+        <div class="logo"><img src="imagens/logomarca V3.png" alt="Logo Personalized Gift Shop"></div>
+        <div class="site-name">Personalized Gift Shop</div>
+        <div class="header-actions">
+            <form action="resultados.html" method="GET">
+                <input type="search" name="q" placeholder="Buscar..." required>
+                <button type="submit" aria-label="Buscar">🔍</button>
+            </form>
+<a href="carrinho.html" class="cart-icon" aria-label="Carrinho de Compras">
+    🛒<span id="cart-count" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; vertical-align: top; display: none;">0</span>
+</a>        </div>
+    </header>
+
+    <nav class="main-nav">
+        <ul>
+            <li><a href="index.html" class="nav-link">Início</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="metodos-container">
+            <h1 id="titulo-personalizacao">Personalize seu Produto</h1>
+            
+            <div class="central-personalizacao">
+                
+                <fieldset class="area-personalizacao">
+                    <legend>Opção 1: Escolha a Base</legend>
+                    <p>Envie uma imagem, escolha uma arte pronta ou comece com uma tela em branco.</p>
+                    <div class="ferramentas-criacao" style="display: flex; justify-content: center; gap: 15px;">
+                        <label for="upload-arte" class="btn-upload">📤 Enviar Imagem</label>
+                        <input type="file" id="upload-arte" accept="image/*" style="display: none;">
+                        <button id="abrir-editor-desenho">🎨 Começar a Personalizar</button>
+                    </div>
+                </fieldset>
+
+                <div id="editor-desenho-container">
+                    <div class="drawing-tools">
+                         <button id="undo-btn" class="tool-btn" title="Desfazer">↩️</button>
+                        <button id="redo-btn" class="tool-btn" title="Refazer">↪️</button>
+                        <button id="pencil-tool" class="tool-btn active" title="Lápis">✏️</button>
+                        <button id="eraser-tool" class="tool-btn" title="Borracha">🧼</button>
+                        <div class="color-palette">
+                            <div class="color-swatch active" style="background-color: #000000;" data-color="#000000"></div>
+                            <div class="color-swatch" style="background-color: #e74c3c;" data-color="#e74c3c"></div>
+                            <div class="color-swatch" style="background-color: #3498db;" data-color="#3498db"></div>
+                            <div class="color-swatch" style="background-color: #2ecc71;" data-color="#2ecc71"></div>
+                        </div>
+                    </div>
+                    <canvas id="canvas-personalizacao" width="500" height="400"></canvas>
+                    <button id="limpar-canvas" style="background-color: #f44336; color: white; border:none; padding: 8px 15px; border-radius: 5px; cursor:pointer;">Limpar Tudo</button>
+                </div>
+
+                <fieldset class="area-personalizacao">
+                    <legend>Opção 2: Artes Prontas</legend>
+                     <div id="galeria-artes" style="display:flex; flex-wrap: wrap; gap:10px; justify-content:center;">
+                        <img src="imagens/amarelo.png" alt="Arte Pronta 1" class="arte-galeria" style="width:80px; height:80px; cursor:pointer; border:1px solid #ccc;">
+                        <img src="imagens/flor.roxa.jpg" alt="Arte Pronta 2" class="arte-galeria" style="width:80px; height:80px; cursor:pointer; border:1px solid #ccc;">
+                        <img src="imagens/coracao.jpg" alt="Arte Pronta 3" class="arte-galeria" style="width:80px; height:80px; cursor:pointer; border:1px solid #ccc;">
+                        <img src="imagens/moldura.jpg" alt="Arte Pronta 4" class="arte-galeria" style="width:80px; height:80px; cursor:pointer; border:1px solid #ccc;">
+                        <img src="imagens/rosto.criativo.jpg" alt="Arte Pronta 5" class="arte-galeria" style="width:80px; height:80px; cursor:pointer; border:1px solid #ccc;">
+                        <img src="imagens/imagens.feia.jpg" alt="Arte Pronta 6" class="arte-galeria" style="width:80px; height:80px; cursor:pointer; border:1px solid #ccc;">
+                    </div>
+                </fieldset>
+
+                <fieldset class="area-personalizacao">
+                    <legend>Opção 3: Adicionar e Editar Texto</legend>
+                    <div class="customizacao-final">
+                        <div class="campo-texto" style="display:flex; gap:10px;">
+                            <input type="text" id="texto-adicional" placeholder="Digite seu texto aqui..." style="flex-grow:1;">
+                            <button id="btn-adicionar-texto">Adicionar Texto</button>
+                        </div>
+                        <div id="text-tools">
+                            <label for="font-family">Fonte:</label>
+                            <select id="font-family">
+                                <option value="Arial">Arial</option>
+                                <option value="Verdana">Verdana</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Brush Script MT">Brush Script MT</option>
+                            </select>
+                            <label for="font-size">Tamanho:</label>
+                            <input type="number" id="font-size" value="40" min="10" max="150">
+                            <label for="font-color">Cor:</label>
+                            <input type="color" id="font-color" value="#000000">
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            
+            <button id="btn-confirmar-personalizacao" style="margin-top:20px;">Confirmar Personalização</button>
+            <a href="produtos.html" class="voltar-link">← Voltar para o Produto</a>
+        </div>
+    </main>
+
+    <footer>
+        <!-- Seu footer completo aqui -->
+    </footer>
+    
+    <!-- Substitua todo o <script> existente por este no arquivo metodos-personalizacao.html -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- SETUP E REFERÊNCIAS ---
+    const canvas = document.getElementById('canvas-personalizacao');
+    const ctx = canvas.getContext('2d');
+    const abrirEditorBtn = document.getElementById('abrir-editor-desenho');
+    const editorContainer = document.getElementById('editor-desenho-container');
+    const uploadInput = document.getElementById('upload-arte');
+    const galeriaArtes = document.getElementById('galeria-artes');
+    const btnConfirmar = document.getElementById('btn-confirmar-personalizacao'); // <-- Referência adicionada
+
+    // Ferramentas de Desenho
+    const pencilTool = document.getElementById('pencil-tool');
+    const eraserTool = document.getElementById('eraser-tool');
+    const colorPalette = document.querySelector('.color-palette');
+    const limparCanvasBtn = document.getElementById('limpar-canvas');
+
+    // Ferramentas de Texto
+    const adicionarTextoBtn = document.getElementById('btn-adicionar-texto');
+    const textoAdicionalInput = document.getElementById('texto-adicional');
+    const textToolsContainer = document.getElementById('text-tools');
+    const fontFamilySelect = document.getElementById('font-family');
+    const fontSizeInput = document.getElementById('font-size');
+    const fontColorInput = document.getElementById('font-color');
+
+    // Histórico
+    const undoBtn = document.getElementById('undo-btn');
+    const redoBtn = document.getElementById('redo-btn');
+    let history = [];
+    let historyStep = -1;
+
+    // --- ESTADO DA APLICAÇÃO ---
+    let currentCanvasState = new Image();
+    let textObjects = [];
+    let activeTextObject = null;
+    let activeTool = 'pencil';
+    let isDrawing = false;
+    let isDragging = false;
+    let dragStartX, dragStartY;
+
+    // Pega o ID do produto da URL para usar depois
+    const urlParams = new URLSearchParams(window.location.search);
+    const produtoIdString = urlParams.get('id');
+
+    // --- FUNÇÕES DE HISTÓRICO (UNDO/REDO) ---
+    const saveState = () => {
+        if (historyStep < history.length - 1) {
+            history = history.slice(0, historyStep + 1);
+        }
+        const state = {
+            imageData: currentCanvasState.src,
+            texts: JSON.parse(JSON.stringify(textObjects))
+        };
+        history.push(state);
+        historyStep++;
+        updateHistoryButtons();
+    };
+
+    const restoreState = () => {
+        if (historyStep < 0) return;
+        const state = history[historyStep];
+        textObjects = state.texts;
+        
+        const img = new Image();
+        img.onload = () => {
+            currentCanvasState = img;
+            redrawCanvas();
+        };
+        img.src = state.imageData;
+        updateHistoryButtons();
+    };
+    
+    const updateHistoryButtons = () => {
+        undoBtn.disabled = historyStep <= 0;
+        redoBtn.disabled = historyStep >= history.length - 1;
+    };
+    
+    undoBtn.addEventListener('click', () => { if (historyStep > 0) { historyStep--; restoreState(); }});
+    redoBtn.addEventListener('click', () => { if (historyStep < history.length - 1) { historyStep++; restoreState(); }});
+
+    // --- RENDERIZAÇÃO PRINCIPAL ---
+    const redrawCanvas = (showSelection = true) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (currentCanvasState.src) {
+            ctx.drawImage(currentCanvasState, 0, 0, canvas.width, canvas.height);
+        }
+        textObjects.forEach(textObj => {
+            ctx.font = `${textObj.size}px ${textObj.font}`;
+            ctx.fillStyle = textObj.color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(textObj.text, textObj.x, textObj.y);
+
+            if (showSelection && textObj === activeTextObject) {
+                const metrics = ctx.measureText(textObj.text);
+                const textWidth = metrics.width;
+                const textHeight = parseInt(textObj.size, 10);
+                ctx.strokeStyle = '#007bff';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([6, 3]);
+                ctx.strokeRect(textObj.x - textWidth / 2 - 5, textObj.y - textHeight / 2 - 5, textWidth + 10, textHeight + 10);
+                ctx.setLineDash([]);
+            }
+        });
+    };
+
+    // --- LÓGICA DAS FERRAMENTAS ---
+    const setActiveTool = (tool) => {
+        activeTool = tool;
+        pencilTool.classList.toggle('active', tool === 'pencil');
+        eraserTool.classList.toggle('active', tool === 'eraser');
+        canvas.style.cursor = (tool === 'pencil' || tool === 'eraser') ? 'crosshair' : 'default';
+    };
+    pencilTool.addEventListener('click', () => setActiveTool('pencil'));
+    eraserTool.addEventListener('click', () => setActiveTool('eraser'));
+
+    // --- CORREÇÃO 1: FUNCIONALIDADE DA PALETA DE CORES ---
+    colorPalette.addEventListener('click', (e) => {
+        if (e.target.classList.contains('color-swatch')) {
+            // Remove a classe 'active' da cor atualmente ativa
+            colorPalette.querySelector('.active').classList.remove('active');
+            // Adiciona a classe 'active' à cor que foi clicada
+            e.target.classList.add('active');
+        }
+    });
+    
+    // --- LÓGICA DE DESENHO (LÁPIS/BORRACHA) ---
+    const startDrawing = (e) => {
+        isDrawing = true;
+        redrawCanvas(false);
+        
+        ctx.beginPath();
+        const { offsetX, offsetY } = e;
+        ctx.moveTo(offsetX, offsetY);
+        ctx.lineWidth = activeTool === 'eraser' ? 20 : 5;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = colorPalette.querySelector('.active').dataset.color;
+        ctx.globalCompositeOperation = activeTool === 'eraser' ? 'destination-out' : 'source-over';
+    };
+
+    const draw = (e) => {
+        if (!isDrawing) return;
+        const { offsetX, offsetY } = e;
+        ctx.lineTo(offsetX, offsetY);
+        ctx.stroke();
+    };
+
+    const stopDrawing = () => {
+        if (!isDrawing) return;
+        isDrawing = false;
+        ctx.closePath();
+        ctx.globalCompositeOperation = 'source-over';
+        currentCanvasState.src = canvas.toDataURL();
+        saveState();
+    };
+
+    // --- LÓGICA DE TEXTO ---
+    adicionarTextoBtn.addEventListener('click', () => {
+        const text = textoAdicionalInput.value;
+        if (!text) return;
+        
+        const newText = {
+            text, x: canvas.width / 2, y: canvas.height / 2,
+            font: 'Arial', size: 40, color: '#000000'
+        };
+        
+        textObjects.push(newText);
+        textoAdicionalInput.value = '';
+        setActiveText(newText);
+        saveState();
+    });
+
+    const setActiveText = (textObj) => {
+        activeTextObject = textObj;
+        textToolsContainer.style.display = textObj ? 'flex' : 'none';
+        if (textObj) {
+            fontFamilySelect.value = textObj.font;
+            fontSizeInput.value = textObj.size;
+            fontColorInput.value = textObj.color;
+            setActiveTool('text');
+        }
+        redrawCanvas();
+    };
+
+    const updateActiveText = () => {
+        if (!activeTextObject) return;
+        activeTextObject.font = fontFamilySelect.value;
+        activeTextObject.size = fontSizeInput.value;
+        activeTextObject.color = fontColorInput.value;
+        redrawCanvas();
+    };
+    fontFamilySelect.addEventListener('change', () => { updateActiveText(); saveState(); });
+    fontSizeInput.addEventListener('input', updateActiveText);
+    fontSizeInput.addEventListener('change', saveState);
+    fontColorInput.addEventListener('input', () => { updateActiveText(); saveState(); });
+
+    // --- EVENTOS DO CANVAS (MOUSE) ---
+    canvas.addEventListener('mousedown', (e) => {
+        if (activeTool === 'pencil' || activeTool === 'eraser') {
+            startDrawing(e);
+            return;
+        }
+
+        const { offsetX, offsetY } = e;
+        let clickedOnObject = false;
+        for (let i = textObjects.length - 1; i >= 0; i--) {
+            const obj = textObjects[i];
+            ctx.font = `${obj.size}px ${obj.font}`;
+            const metrics = ctx.measureText(obj.text);
+            if (offsetX > obj.x - metrics.width / 2 && offsetX < obj.x + metrics.width / 2 &&
+                offsetY > obj.y - parseInt(obj.size)/2 && offsetY < obj.y + parseInt(obj.size)/2) {
+                
+                isDragging = true;
+                dragStartX = offsetX;
+                dragStartY = offsetY;
+                clickedOnObject = true;
+                setActiveText(obj);
+                break;
+            }
+        }
+        if (!clickedOnObject) setActiveText(null);
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (isDrawing) { draw(e); return; }
+        if (isDragging && activeTextObject) {
+            const { offsetX, offsetY } = e;
+            activeTextObject.x += offsetX - dragStartX;
+            activeTextObject.y += offsetY - dragStartY;
+            dragStartX = offsetX;
+            dragStartY = offsetY;
+            redrawCanvas();
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        if (isDrawing) stopDrawing();
+        if (isDragging) {
+            isDragging = false;
+            saveState();
+        }
+    });
+
+    // --- AÇÕES GERAIS ---
+    abrirEditorBtn.addEventListener('click', () => {
+        editorContainer.style.display = 'flex';
+        abrirEditorBtn.style.display = 'none';
+    });
+
+    // --- CORREÇÃO 3: FUNÇÃO `loadImage` CORRIGIDA PARA NÃO ESTICAR A IMAGEM ---
+    const loadImage = (src) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Calcula a proporção para manter o aspecto da imagem
+            const canvasAspectRatio = canvas.width / canvas.height;
+            const imgAspectRatio = img.width / img.height;
+            let renderWidth, renderHeight, xStart, yStart;
+
+            if (imgAspectRatio > canvasAspectRatio) {
+                // Imagem mais "larga" que o canvas
+                renderWidth = canvas.width;
+                renderHeight = canvas.width / imgAspectRatio;
+                xStart = 0;
+                yStart = (canvas.height - renderHeight) / 2;
+            } else {
+                // Imagem mais "alta" que o canvas ou com a mesma proporção
+                renderHeight = canvas.height;
+                renderWidth = canvas.height * imgAspectRatio;
+                yStart = 0;
+                xStart = (canvas.width - renderWidth) / 2;
+            }
+            
+            // Desenha a imagem centralizada e com a proporção correta
+            ctx.drawImage(img, xStart, yStart, renderWidth, renderHeight);
+
+            currentCanvasState.src = canvas.toDataURL();
+            textObjects = [];
+            setActiveText(null);
+            saveState();
+            if (editorContainer.style.display !== 'flex') abrirEditorBtn.click();
+        };
+        img.src = src;
+    };
+
+    uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) loadImage(URL.createObjectURL(file));
+    });
+
+    galeriaArtes.addEventListener('click', (e) => {
+        if(e.target.tagName === 'IMG') loadImage(e.target.src);
+    });
+
+    limparCanvasBtn.addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        currentCanvasState.src = canvas.toDataURL(); // Salva o estado em branco
+        textObjects = [];
+        setActiveText(null);
+        saveState();
+    });
+
+    // --- CORREÇÃO 2: FUNCIONALIDADE DO BOTÃO "CONFIRMAR PERSONALIZAÇÃO" ---
+    if (btnConfirmar) {
+        btnConfirmar.addEventListener('click', () => {
+            // Salva a imagem final do canvas no localStorage
+            const personalizacaoFinal = canvas.toDataURL('image/png');
+            localStorage.setItem('produtoPersonalizado', personalizacaoFinal);
+
+            alert('Personalização salva! Você será redirecionado para a página do produto para adicioná-lo ao carrinho.');
+
+            // Redireciona de volta para a página do produto, se o ID existir
+            if (produtoIdString) {
+                window.location.href = `produtos.html?id=${produtoIdString}`;
+            } else {
+                window.location.href = 'index.html'; // Fallback
+            }
+        });
+    }
+    
+    // --- INICIALIZAÇÃO ---
+    saveState();
+});
+</script>
+</body>
+</html>
