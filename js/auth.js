@@ -64,11 +64,17 @@ supabase.auth.onAuthStateChange((event, session) => {
 // --- LÓGICA PARA A PÁGINA DE CADASTRO ---
 const registrationForm = document.getElementById('registration-form');
 if (registrationForm) {
-    const errorMessage = document.getElementById('registration-error');
-
     registrationForm.addEventListener('submit', async (e) => {
         e.preventDefault(); 
-        errorMessage.textContent = '';
+
+        // CORREÇÃO DEFINITIVA: A variável é declarada DENTRO do evento,
+        // garantindo que o elemento HTML já existe quando o código for executado.
+        const errorMessage = document.getElementById('registration-error');
+        if (!errorMessage) {
+            console.error("Elemento 'registration-error' não encontrado no HTML!");
+            return;
+        }
+        errorMessage.textContent = ''; // Limpa mensagens de erro antigas
 
         const nomeCompleto = document.getElementById('nome-completo').value;
         const email = document.getElementById('email').value;
@@ -95,13 +101,9 @@ if (registrationForm) {
                 email: email,
                 password: senha,
             });
-
             if (authError) throw authError;
 
             if (authData.user) {
-                // Após o signUp, o gatilho cria a linha no 'profiles'.
-                // Agora, ATUALIZAMOS essa linha com os dados do formulário.
-                // Isso funcionará por causa da política RLS que criamos.
                 const { error: updateError } = await supabase
                     .from('profiles')
                     .update({
@@ -109,13 +111,11 @@ if (registrationForm) {
                         telefone: telefone
                     })
                     .eq('id_profiles', authData.user.id);
-
                 if (updateError) throw updateError;
             }
 
             alert('Cadastro realizado com sucesso! Você será redirecionado para o login.');
             window.location.href = 'index.html?section=login';
-
         } catch (error) {
             console.error('Erro detalhado do cadastro:', error);
             if (error.message.includes("User already registered")) {
@@ -158,8 +158,6 @@ if (loginForm) {
                     window.location.href = 'admin.html';
                 } else {
                     alert('Login bem-sucedido!');
-                    // Para usuários comuns, o onAuthStateChange cuidará de atualizar a UI.
-                    // Não é necessário redirecionar aqui.
                 }
             }
         } catch (error) {
@@ -178,7 +176,6 @@ if(logoutButton) {
             alert('Erro ao sair: ' + error.message);
         } else {
             alert('Você saiu da sua conta.');
-            // Garante que a página recarregue para o estado de "deslogado"
             window.location.href = 'index.html'; 
         }
     });
