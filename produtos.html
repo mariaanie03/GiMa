@@ -93,84 +93,109 @@
     </footer>
 
 
-    <!-- 1. Carrega a conexão com o Supabase PRIMEIRO -->
+    <!-- 1. Carrega a conexão com o Supabase -->
     <script type="module" src="js/supabaseClient.js"></script>
 
     <!-- 2. Carrega o script principal que busca os detalhes do produto -->
     <script type="module" src="js/script.js"></script>
 
-    <!-- 3. Carrega a lógica de adicionar ao carrinho com proteção de login -->
+    <!-- 3. Lógica de adicionar ao carrinho com salvamento no BANCO DE DADOS -->
     <script type="module">
-        // Importa o supabase para podermos verificar o login
         import { supabase } from './js/supabaseClient.js';
 
         document.addEventListener('DOMContentLoaded', () => {
             const btnAdicionar = document.getElementById('btn-add-carrinho');
             const urlParams = new URLSearchParams(window.location.search);
-            const produtoId = urlParams.get('id');
+            // Certifique-se de que o ID do produto é um número para corresponder ao banco de dados
+            const produtoId = parseInt(urlParams.get('id'));
 
             if (btnAdicionar && produtoId) {
-                // Transformamos o evento de clique em uma função 'async' para usar o supabase
                 btnAdicionar.addEventListener('click', async () => {
-                    
-                    // 1. VERIFICAR SE O USUÁRIO ESTÁ LOGADO
+                    // Pega a sessão atual do usuário
                     const { data: { session } } = await supabase.auth.getSession();
 
-                    if (session) {
-                        // --- USUÁRIO ESTÁ LOGADO: LÓGICA NORMAL ---
-                        const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-                        const personalizacao = localStorage.getItem('produtoPersonalizado');
+                    // Se não houver sessão (usuário não logado), redireciona para o login
+                    if (!session) {
+                        alert('Você precisa fazer login para adicionar produtos ao carrinho.');
+                        window.location.href = 'index.html?section=login';
+                        return;
+                    }
 
-                        const nomeProduto = document.getElementById('produto-nome').textContent;
-                        const precoProdutoTexto = document.getElementById('produto-preco').textContent;
+                    const userId = session.user.id;
+                    // A personalização ainda vem do localStorage, pois é temporária
+                    const personalizacao = localStorage.getItem('produtoPersonalizado');
 
-                        if (nomeProduto === 'Carregando nome...' || !precoProdutoTexto.includes('R$')) {
-                            alert('Erro: Os detalhes do produto ainda não foram carregados.');
-                            return;
-                        }
+                    try {
+                        // 1. Verifica se um item idêntico (mesmo produto, mesmo usuário) já existe no carrinho
+                        const { data: itemExistente, error: selectError } = await supabase
+                            .from('carrinhos')
+                            .select('id, quantity') // Seleciona só o que precisamos
+                            .eq('user_id', userId)
+                            .eq('produto_id', produtoId)
+                            .maybeSingle(); // Retorna um único item ou null, sem erro se não encontrar
 
-                        const produto = {
-                            id: produtoId,
-                            name: nomeProduto,
-                            price: parseFloat(precoProdutoTexto.replace('R$ ', '').replace(',', '.')),
-                            image: document.getElementById('produto-imagem').src,
-                            quantity: 1,
-                            customization: personalizacao || null
-                        };
+                        if (selectError) throw selectError;
 
-                        const itemExistente = carrinho.find(item => item.id === produto.id && item.customization === produto.customization);
                         if (itemExistente) {
-                            itemExistente.quantity++;
+                            // 2a. Se o item já existe, apenas incrementa a quantidade
+                            const novaQuantidade = itemExistente.quantity + 1;
+                            const { error: updateError } = await supabase
+                                .from('carrinhos')
+                                .update({ quantity: novaQuantidade })
+                                .eq('id', itemExistente.id); // Atualiza usando a chave primária do item do carrinho
+                            
+                            if (updateError) throw updateError;
                         } else {
-                            carrinho.push(produto);
-                        }
+                            // 2b. Se o item não existe, insere uma nova linha na tabela
+                            const { error: insertError } = await supabase
+                                .from('carrinhos')
+                                .insert({
+                                    user_id: userId,
+                                    produto_id: produtoId,
+                                    quantity: 1,
+                                    customization: personalizacao // Salva a personalização se houver
+                                });
 
-                        localStorage.setItem('carrinho', JSON.stringify(carrinho));
+                            if (insertError) throw insertError;
+                        }
+                        
+                        // Limpa a personalização local do navegador após salvar no banco
                         if (personalizacao) {
                             localStorage.removeItem('produtoPersonalizado');
                         }
 
-                        alert(`"${produto.name}" foi adicionado ao carrinho!`);
-                        atualizarContadorCarrinhoHeader();
+                        alert(`"${document.getElementById('produto-nome').textContent}" foi adicionado ao carrinho!`);
+                        
+                        // Atualiza o contador do header
+                        atualizarContadorCarrinhoHeader(userId);
 
-                    } else {
-                        // --- USUÁRIO NÃO ESTÁ LOGADO: AVISO E REDIRECIONAMENTO ---
-                        alert('Você precisa fazer login para adicionar produtos ao carrinho.');
-                        window.location.href = 'index.html?section=login';
+                    } catch (error) {
+                        console.error('Erro ao adicionar ao carrinho:', error);
+                        alert('Não foi possível adicionar o item ao carrinho. Tente novamente.');
                     }
                 });
             }
-            
-            const atualizarContadorCarrinhoHeader = () => {
-                const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-                const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
-                const contador = document.getElementById('cart-count');
-                if(contador) {
-                    contador.textContent = totalItens;
-                    contador.style.display = totalItens > 0 ? 'inline' : 'none';
+
+            // Função para atualizar o ícone do carrinho no header
+            async function atualizarContadorCarrinhoHeader(userId) {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) return; // Não faz nada se não estiver logado
+
+                // Conta quantos itens o usuário tem no carrinho no banco
+                const { count, error } = await supabase
+                    .from('carrinhos')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', session.user.id);
+                
+                const contadorEl = document.getElementById('cart-count');
+                if (contadorEl) {
+                    const totalItens = count || 0;
+                    contadorEl.textContent = totalItens;
+                    contadorEl.style.display = totalItens > 0 ? 'inline-block' : 'none';
                 }
-            };
-            
+            }
+
+            // Carrega o contador assim que a página é aberta
             atualizarContadorCarrinhoHeader();
         });
     </script>

@@ -28,45 +28,31 @@
     </nav>
 
     <main>
-        <!-- Container que só aparece se o usuário estiver LOGADO -->
+        <!-- Container principal que só aparece para usuários logados -->
         <div id="carrinho-logado" style="display: none;">
             <h1>Meu Carrinho de Compras</h1>
-
-            <!-- Container para o carrinho COM itens -->
-            <div id="carrinho-cheio" class="carrinho-container">
+            <div id="carrinho-cheio" class="carrinho-container" style="display: none;">
                 <div id="lista-produtos-carrinho" class="carrinho-produtos">
-                    <!-- Produtos são inseridos aqui pelo JavaScript -->
+                    <!-- Mensagem de carregamento inicial -->
+                    <p>Carregando seu carrinho...</p>
                 </div>
                 <div id="resumo-carrinho" class="carrinho-resumo">
                     <h2>Resumo do Pedido</h2>
-                    <div class="resumo-linha">
-                        <span>Subtotal:</span>
-                        <span id="subtotal-valor">R$ 0,00</span>
-                    </div>
-                    <div class="resumo-linha">
-                        <span>Frete:</span>
-                        <span id="frete-valor">R$ 0,00</span>
-                    </div>
-                    <div id="resumo-total" class="resumo-linha">
-                        <span>Total:</span>
-                        <span id="total-valor">R$ 0,00</span>
-                    </div>
+                    <div class="resumo-linha"><span>Subtotal:</span><span id="subtotal-valor">R$ 0,00</span></div>
+                    <div class="resumo-linha"><span>Frete:</span><span id="frete-valor">R$ 0,00</span></div>
+                    <div id="resumo-total" class="resumo-linha"><span>Total:</span><span id="total-valor">R$ 0,00</span></div>
                     <a href="#" class="btn-checkout">Finalizar Compra</a>
                 </div>
             </div>
-
-            <!-- Container para o carrinho VAZIO -->
             <div id="carrinho-vazio" style="display: none; text-align: center; padding: 50px;">
                 <h2>Seu carrinho está vazio.</h2>
-                <p>Adicione produtos para vê-los aqui.</p>
                 <a href="index.html" class="btn-continuar-comprando">Continuar Comprando</a>
             </div>
         </div>
 
-        <!-- Container que só aparece se o usuário NÃO ESTIVER LOGADO -->
+        <!-- Mensagem para usuários não logados -->
         <div id="carrinho-deslogado" style="display: none; text-align: center; padding: 50px;">
             <h2>Você precisa estar logado para ver seu carrinho.</h2>
-            <p>Faça o login ou crie sua conta para continuar suas compras.</p>
             <a href="index.html?section=login" class="btn-continuar-comprando">Ir para o Login</a>
         </div>
     </main>
@@ -119,132 +105,135 @@
         </div>
     </footer>
     
-    <!-- Carrega o supabase primeiro -->
     <script type="module" src="js/supabaseClient.js"></script>
-
-    <!-- Script da página do carrinho com proteção de login -->
     <script type="module">
         import { supabase } from './js/supabaseClient.js';
 
+        let userId = null;
+
+        // Função principal executada quando a página carrega
         document.addEventListener('DOMContentLoaded', async () => {
-            // 1. VERIFICA O STATUS DE LOGIN ASSIM QUE A PÁGINA CARREGA
             const { data: { session } } = await supabase.auth.getSession();
 
-            const carrinhoLogadoDiv = document.getElementById('carrinho-logado');
-            const carrinhoDeslogadoDiv = document.getElementById('carrinho-deslogado');
-
             if (session) {
-                // --- USUÁRIO ESTÁ LOGADO ---
-                carrinhoLogadoDiv.style.display = 'block';
-                carrinhoDeslogadoDiv.style.display = 'none';
-                
-                // Executa a lógica normal de renderização do carrinho
-                iniciarLogicaCarrinho();
+                userId = session.user.id;
+                document.getElementById('carrinho-logado').style.display = 'block';
+                document.getElementById('carrinho-deslogado').style.display = 'none';
+                renderizarCarrinho();
             } else {
-                // --- USUÁRIO NÃO ESTÁ LOGADO ---
-                carrinhoLogadoDiv.style.display = 'none';
-                carrinhoDeslogadoDiv.style.display = 'block';
-                // Limpa o carrinho local para não vazar informações se outro usuário logar
-                localStorage.removeItem('carrinho');
-                atualizarContadorCarrinhoHeader(); // Garante que o contador do header zere
+                document.getElementById('carrinho-logado').style.display = 'none';
+                document.getElementById('carrinho-deslogado').style.display = 'block';
             }
         });
-        
-        // Função para atualizar o contador no header (pode ser chamada de vários lugares)
-        const atualizarContadorCarrinhoHeader = () => {
-            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-            const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
-            const contador = document.getElementById('cart-count');
-            if(contador) {
-                contador.textContent = totalItens;
-                contador.style.display = totalItens > 0 ? 'inline' : 'none';
-            }
-        };
 
-        // Toda a lógica de manipulação do carrinho agora está dentro desta função
-        function iniciarLogicaCarrinho() {
+        // Função para buscar dados do Supabase e desenhar o carrinho na tela
+        async function renderizarCarrinho() {
+            if (!userId) return;
+
             const listaProdutosContainer = document.getElementById('lista-produtos-carrinho');
-            const carrinhoCheioContainer = document.getElementById('carrinho-cheio');
-            const carrinhoVazioContainer = document.getElementById('carrinho-vazio');
             
-            const getCarrinho = () => JSON.parse(localStorage.getItem('carrinho')) || [];
-            const salvarCarrinho = (carrinho) => localStorage.setItem('carrinho', JSON.stringify(carrinho));
+            // Busca os itens do carrinho e, para cada item, busca os detalhes do produto relacionado
+            const { data: items, error } = await supabase
+                .from('carrinhos')
+                .select(`
+                    id,
+                    quantity,
+                    customization,
+                    produtos (
+                        id_produtos,
+                        nome,
+                        preco,
+                        imagem_url
+                    )
+                `)
+                .eq('user_id', userId)
+                .order('created_at'); // Ordena por data de criação
 
-            const renderizarCarrinho = () => {
-                const carrinho = getCarrinho();
-                listaProdutosContainer.innerHTML = '';
+            if (error) {
+                console.error("Erro ao buscar carrinho:", error);
+                listaProdutosContainer.innerHTML = "<p>Erro ao carregar o carrinho.</p>";
+                return;
+            }
 
-                if (carrinho.length === 0) {
-                    carrinhoCheioContainer.style.display = 'none';
-                    carrinhoVazioContainer.style.display = 'block';
-                } else {
-                    carrinhoCheioContainer.style.display = 'flex';
-                    carrinhoVazioContainer.style.display = 'none';
-                    carrinho.forEach(item => {
-                        const produtoHTML = `
-                            <div class="produto-carrinho" data-id="${item.id}" data-custom="${item.customization || ''}">
-                                <img src="${item.customization || item.image}" alt="${item.name}">
-                                <div class="produto-info">
-                                    <h3>${item.name}</h3>
-                                    <p>Preço: R$ ${parseFloat(item.price).toFixed(2)}</p>
-                                </div>
-                                <div class="produto-qtd">
-                                    <button class="btn-diminuir-qtd">-</button>
-                                    <span>${item.quantity}</span>
-                                    <button class="btn-aumentar-qtd">+</button>
-                                </div>
-                                <div class="produto-remover">
-                                    <button class="btn-remover-item">🗑️</button>
-                                </div>
-                            </div>
-                        `;
-                        listaProdutosContainer.innerHTML += produtoHTML;
-                    });
-                }
-                atualizarResumo();
-                atualizarContadorCarrinhoHeader();
-            };
-
-            const atualizarResumo = () => {
-                const carrinho = getCarrinho();
-                const subtotal = carrinho.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-                const frete = carrinho.length > 0 ? 15.00 : 0; // Frete só é cobrado se houver itens
-                const total = subtotal + frete;
-
-                document.getElementById('subtotal-valor').textContent = `R$ ${subtotal.toFixed(2)}`;
-                document.getElementById('frete-valor').textContent = `R$ ${frete.toFixed(2)}`;
-                document.getElementById('total-valor').textContent = `R$ ${total.toFixed(2)}`;
-            };
-
-            listaProdutosContainer.addEventListener('click', (e) => {
-                const produtoDiv = e.target.closest('.produto-carrinho');
-                if (!produtoDiv) return;
-
-                const produtoId = produtoDiv.dataset.id;
-                const customizacao = produtoDiv.dataset.custom;
+            if (items.length === 0) {
+                document.getElementById('carrinho-cheio').style.display = 'none';
+                document.getElementById('carrinho-vazio').style.display = 'block';
+            } else {
+                document.getElementById('carrinho-cheio').style.display = 'flex';
+                document.getElementById('carrinho-vazio').style.display = 'none';
                 
-                let carrinho = getCarrinho();
-                const itemIndex = carrinho.findIndex(item => item.id === produtoId && (item.customization || '') === customizacao);
-                if (itemIndex === -1) return;
+                listaProdutosContainer.innerHTML = ''; // Limpa "Carregando..."
+                items.forEach(item => {
+                    const produto = item.produtos;
+                    // Previne erro caso um produto tenha sido deletado mas ainda esteja no carrinho
+                    if (!produto) return; 
 
-                if (e.target.classList.contains('btn-aumentar-qtd')) {
-                    carrinho[itemIndex].quantity++;
-                } else if (e.target.classList.contains('btn-diminuir-qtd')) {
-                    carrinho[itemIndex].quantity--;
-                    if (carrinho[itemIndex].quantity <= 0) {
-                        carrinho.splice(itemIndex, 1);
-                    }
-                } else if (e.target.classList.contains('btn-remover-item')) {
-                    carrinho.splice(itemIndex, 1);
-                }
-                
-                salvarCarrinho(carrinho);
-                renderizarCarrinho();
-            });
-            
-            // Primeira renderização ao iniciar a lógica
-            renderizarCarrinho();
+                    const produtoHTML = `
+                        <div class="produto-carrinho" data-cart-id="${item.id}" data-quantity="${item.quantity}">
+                            <img src="${item.customization || produto.imagem_url}" alt="${produto.nome}">
+                            <div class="produto-info"><h3>${produto.nome}</h3><p>Preço: R$ ${parseFloat(produto.preco).toFixed(2)}</p></div>
+                            <div class="produto-qtd"><button class="btn-diminuir-qtd">-</button><span>${item.quantity}</span><button class="btn-aumentar-qtd">+</button></div>
+                            <div class="produto-remover"><button class="btn-remover-item">🗑️</button></div>
+                        </div>
+                    `;
+                    listaProdutosContainer.innerHTML += produtoHTML;
+                });
+            }
+            atualizarResumo(items);
+            atualizarContadorHeader(items);
         }
+
+        // --- Funções de Atualização (Resumo e Header) ---
+        function atualizarResumo(items = []) {
+            const subtotal = items.reduce((acc, item) => {
+                // Soma apenas se o produto associado existir
+                return item.produtos ? acc + (item.produtos.preco * item.quantity) : acc;
+            }, 0);
+            const frete = items.length > 0 ? 15.00 : 0;
+            const total = subtotal + frete;
+            document.getElementById('subtotal-valor').textContent = `R$ ${subtotal.toFixed(2)}`;
+            document.getElementById('frete-valor').textContent = `R$ ${frete.toFixed(2)}`;
+            document.getElementById('total-valor').textContent = `R$ ${total.toFixed(2)}`;
+        }
+
+        function atualizarContadorHeader(items = []) {
+            const totalItens = items.reduce((acc, item) => acc + item.quantity, 0);
+            const contadorEl = document.getElementById('cart-count');
+            if (contadorEl) {
+                contadorEl.textContent = totalItens;
+                contadorEl.style.display = totalItens > 0 ? 'inline-block' : 'none';
+            }
+        }
+        
+        // --- Lógica de Eventos para os botões do carrinho ---
+        document.getElementById('lista-produtos-carrinho').addEventListener('click', async (e) => {
+            const cartItemDiv = e.target.closest('.produto-carrinho');
+            if (!cartItemDiv) return;
+
+            const cartItemId = parseInt(cartItemDiv.dataset.cartId);
+            const currentQuantity = parseInt(cartItemDiv.dataset.quantity);
+            
+            // Desabilita botões para evitar cliques duplos enquanto a operação ocorre
+            cartItemDiv.style.pointerEvents = 'none';
+            cartItemDiv.style.opacity = '0.5';
+
+            if (e.target.classList.contains('btn-remover-item')) {
+                await supabase.from('carrinhos').delete().eq('id', cartItemId);
+            }
+            else if (e.target.classList.contains('btn-aumentar-qtd')) {
+                await supabase.from('carrinhos').update({ quantity: currentQuantity + 1 }).eq('id', cartItemId);
+            }
+            else if (e.target.classList.contains('btn-diminuir-qtd')) {
+                if (currentQuantity > 1) {
+                    await supabase.from('carrinhos').update({ quantity: currentQuantity - 1 }).eq('id', cartItemId);
+                } else {
+                    await supabase.from('carrinhos').delete().eq('id', cartItemId);
+                }
+            }
+
+            // Após a operação no banco, recarrega a lista do carrinho
+            renderizarCarrinho();
+        });
     </script>
 </body>
 </html>
