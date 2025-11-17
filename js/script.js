@@ -1,41 +1,5 @@
 import { supabase } from './supabaseClient.js';
 
-// Função para carregar os produtos na grade da página principal (para usuários logados)
-async function loadMainProducts() {
-    const grid = document.getElementById('product-grid-main');
-    // Só executa se o elemento da grade existir na página
-    if (!grid) return;
-
-    console.log("Carregando produtos na página principal...");
-
-    const { data: produtos, error } = await supabase
-        .from('produtos')
-        .select('*')
-        .order('nome', { ascending: true }); // Opcional: ordena os produtos por nome
-
-    if (error) {
-        console.error('Erro ao carregar produtos:', error);
-        grid.innerHTML = '<p>Erro ao carregar os produtos. Tente novamente mais tarde.</p>';
-        return;
-    }
-
-    if (produtos && produtos.length > 0) {
-        grid.innerHTML = produtos.map(produto => `
-            <div class="produto-card-main">
-                <img src="${produto.imagem_url}" alt="${produto.nome}">
-                <div>
-                    <h3>${produto.nome}</h3>
-                    <p class="preco">R$ ${produto.preco}</p>
-                </div>
-                <button class="btn-ver-detalhes" onclick="verDetalhes('${produto.id_produtos}')">Ver Detalhes</button>
-            </div>
-        `).join('');
-    } else {
-        grid.innerHTML = '<p>Nenhum produto encontrado no momento.</p>';
-    }
-}
-
-
 document.addEventListener('DOMContentLoaded', function() {
 
     // ===================================================================
@@ -44,60 +8,53 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('home-content')) {
         console.log("Lógica da PÁGINA INICIAL sendo executada.");
 
-        // Função para mostrar a seção correta (Sobre, Login) e esconder as outras
+        // Função para mostrar a seção correta (Home, Sobre, Login) sem recarregar a página
         function showSection(targetId) {
-            const contentSections = document.querySelectorAll('.content-section');
-            contentSections.forEach(section => section.classList.remove('active'));
+            // Esconde todas as seções
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
             
+            // Mostra a seção alvo
             const targetSection = document.getElementById(targetId);
             if (targetSection) {
                 targetSection.classList.add('active');
             }
 
-            // Atualiza a classe 'active' nos links de navegação
-            const navLinks = document.querySelectorAll('.main-nav .nav-link');
-            navLinks.forEach(link => {
+            // Atualiza qual link de navegação está ativo
+            document.querySelectorAll('.main-nav .nav-link').forEach(link => {
                 link.classList.remove('active');
                 if (link.dataset.target === targetId) {
                     link.classList.add('active');
                 }
             });
-             // Garante que o link "Home" fique desmarcado se outra aba for clicada
-            if (targetId !== 'home-content' && targetId !== 'logged-in-content') {
-                 document.getElementById('home-nav-link').querySelector('.nav-link').classList.remove('active');
+
+            // Garante que o link "Home" fique desmarcado se outra aba for clicada
+            if (targetId !== 'home-content') {
+                 document.querySelector('#home-nav-link .nav-link').classList.remove('active');
             }
         }
 
-        // Verifica se a URL tem um parâmetro para abrir uma seção específica (ex: vindo de um link do footer)
+        // Permite abrir uma seção específica via URL (ex: index.html?section=about)
         const urlParams = new URLSearchParams(window.location.search);
         const sectionParam = urlParams.get('section');
-
-        if (sectionParam === 'login') {
-            showSection('login-content');
-        } else if (sectionParam === 'about') {
-            showSection('about-content');
+        if (sectionParam) {
+            // Constrói o ID do alvo (ex: 'about' -> 'about-content')
+            showSection(sectionParam + '-content');
         }
-        // O estado padrão (home vs logged-in) é controlado pelo auth.js
 
-        // Adiciona o evento de clique nos links que trocam de seção (Sobre, Login)
-        const navLinks = document.querySelectorAll('.main-nav span.nav-link[data-target]');
-        navLinks.forEach(link => {
+        // Adiciona o evento de clique nos links de navegação da página inicial
+        document.querySelectorAll('.main-nav span.nav-link[data-target]').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
-                const targetId = this.dataset.target;
-                showSection(targetId);
+                showSection(this.dataset.target);
             });
         });
-
-        // Chama a função para carregar os produtos na grade de usuários logados
-        loadMainProducts();
     }
     
     // ===================================================================
     // --- FUNÇÕES GLOBAIS E LÓGICAS PARA OUTRAS PÁGINAS ---
     // ===================================================================
 
-    // Função global para navegar para os detalhes do produto
+    // Função global para navegar para a página de detalhes do produto
     window.verDetalhes = function(idProduto) {
         window.location.href = `produtos.html?id=${idProduto}`;
     }

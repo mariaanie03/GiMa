@@ -27,17 +27,15 @@
 
     <nav class="main-nav">
         <ul>
-            <!-- O link de Login agora tem um ID para ser controlado pelo JS -->
             <li id="home-nav-link"><span data-target="home-content" class="nav-link active">Home</span></li>
             <li id="about-nav-link"><span data-target="about-content" class="nav-link">Sobre</span></li>
             <li id="login-nav-link"><span data-target="login-content" class="nav-link">Login</span></li>
-            <!-- O link de Sair começa escondido e será mostrado pelo JS -->
             <li id="logout-nav-link" style="display: none;"><span class="nav-link">Sair</span></li>
         </ul>
     </nav>
 
     <main>
-        <!-- Seção Home para usuários NÃO LOGADOS -->
+        <!-- Seção Home (Dicas e Inspirações) - VISÍVEL PARA TODOS -->
         <section id="home-content" class="content-section active">
             <div class="dicas-container">
                 <h2>Inspire-se com Nossas Ideias</h2>
@@ -133,20 +131,9 @@
             </div>
         </section>
 
-        <!-- NOVA SEÇÃO: Conteúdo para usuários LOGADOS -->
-        <section id="logged-in-content" class="content-section">
-            <h2>Nossos Produtos</h2>
-            <p>Seja bem-vindo(a)! Explore nosso catálogo completo abaixo.</p>
-            <div id="product-grid-main" class="produtos-grid-main">
-                <!-- Os produtos do banco de dados serão inseridos aqui pelo script.js -->
-            </div>
-        </section>
-
-
         <!-- Seção Sobre -->
         <section id="about-content" class="content-section">
             <h2>Sobre Nós</h2>
-            <p>Informações sobre a loja de presentes personalizados. Nossa missão, visão e valores.</p>
             <p>Bem-vindo à Personalized Gift Shop! Mais do que uma simples loja, somos um ateliê de emoções,
                 um lugar onde ideias se transformam em presentes únicos e significativos. Acreditamos que cada presente
                 deve contar uma história,
@@ -260,9 +247,6 @@
         </div>
     </footer>
 
-   
-
-    <!-- Scripts carregados no final para melhor performance -->
     <script type="module" src="js/supabaseClient.js"></script>
     <script type="module" src="js/auth.js"></script>
     <script type="module" src="js/script.js"></script>

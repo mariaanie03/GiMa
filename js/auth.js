@@ -9,49 +9,38 @@ console.log('auth.js carregado');
 // --- CONTROLE DE UI BASEADO NA AUTENTICAÇÃO ---
 // ===================================================================
 
-// Função para atualizar a interface com base no status do usuário (logado ou não)
+// Função para atualizar a interface (apenas os botões de login/logout)
 function updateUserUI(user) {
-    // Só executa esta lógica se estiver na página inicial (onde os elementos existem)
+    // Só executa a lógica se estiver na página inicial
     if (document.getElementById('home-content')) {
         const loginLink = document.getElementById('login-nav-link');
         const logoutLink = document.getElementById('logout-nav-link');
-        const homeLink = document.getElementById('home-nav-link');
-        const aboutLink = document.getElementById('about-nav-link');
-        const homeContent = document.getElementById('home-content');
-        const loggedInContent = document.getElementById('logged-in-content');
-        const loginContent = document.getElementById('login-content');
 
         if (user) {
             // --- USUÁRIO ESTÁ LOGADO ---
             loginLink.style.display = 'none';
             logoutLink.style.display = 'list-item';
-            
-            homeContent.classList.remove('active');
-            loggedInContent.classList.add('active');
-            loginContent.classList.remove('active');
 
-            homeLink.querySelector('span').dataset.target = 'logged-in-content';
-            homeLink.querySelector('span').classList.add('active');
-            aboutLink.querySelector('span').classList.remove('active');
+            // Se o usuário fez login a partir da seção de login,
+            // o esconde e volta para a seção principal 'home-content'.
+            const loginContent = document.getElementById('login-content');
+            if (loginContent && loginContent.classList.contains('active')) {
+                loginContent.classList.remove('active');
+                document.getElementById('home-content').classList.add('active');
+                // Reativa o link "Home" na navegação
+                document.querySelector('#home-nav-link .nav-link').classList.add('active');
+                document.querySelector('#login-nav-link .nav-link').classList.remove('active');
+            }
         } else {
             // --- USUÁRIO NÃO ESTÁ LOGADO ---
             loginLink.style.display = 'list-item';
             logoutLink.style.display = 'none';
-
-            homeContent.classList.add('active');
-            loggedInContent.classList.remove('active');
-            loginContent.classList.remove('active');
-
-            homeLink.querySelector('span').dataset.target = 'home-content';
-            homeLink.querySelector('span').classList.add('active');
-            aboutLink.querySelector('span').classList.remove('active');
         }
     }
 }
 
-// "Ouve" em tempo real se o usuário faz login, logout ou recarrega a página
+// "Ouve" em tempo real as mudanças de autenticação
 supabase.auth.onAuthStateChange((event, session) => {
-    console.log('Estado de autenticação mudou:', event);
     const user = session?.user;
     updateUserUI(user);
 });
@@ -67,13 +56,12 @@ if (registrationForm) {
     registrationForm.addEventListener('submit', async (e) => {
         e.preventDefault(); 
 
-        // A variável é declarada DENTRO do evento, garantindo que o elemento HTML já existe.
         const errorMessage = document.getElementById('registration-error');
         if (!errorMessage) {
             console.error("ERRO CRÍTICO: O elemento com id 'registration-error' não foi encontrado no HTML!");
             return;
         }
-        errorMessage.textContent = ''; // Limpa mensagens de erro antigas
+        errorMessage.textContent = ''; // Limpa mensagens antigas
 
         const nomeCompleto = document.getElementById('nome-completo').value;
         const email = document.getElementById('email').value;
@@ -131,32 +119,21 @@ const loginForm = document.getElementById('actual-login-form');
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const email = document.getElementById('login-email').value;
         const senha = document.getElementById('login-senha').value;
-
         try {
-            const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: senha,
-            });
-
-            if (loginError) throw loginError;
-
-            if (loginData.user) {
-                const { data: profile, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('role')
-                    .eq('id_profiles', loginData.user.id)
-                    .single();
-
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
+            if (error) throw error;
+            if (data.user) {
+                const { data: profile, error: profileError } = await supabase.from('profiles').select('role').eq('id_profiles', data.user.id).single();
                 if (profileError) throw profileError;
-                
+
                 if (profile && profile.role === 'admin') {
                     alert('Bem-vindo, Administrador!');
                     window.location.href = 'admin.html';
                 } else {
                     alert('Login bem-sucedido!');
+                    // O updateUserUI será chamado automaticamente pelo onAuthStateChange
                 }
             }
         } catch (error) {
@@ -172,10 +149,11 @@ if(logoutButton) {
     logoutButton.addEventListener('click', async () => {
         const { error } = await supabase.auth.signOut();
         if (error) {
-            alert('Erro ao sair: ' + error.message);
+            console.error('Erro ao sair:', error);
+            alert('Erro ao sair da conta.');
         } else {
-            alert('Você saiu da sua conta.');
-            window.location.href = 'index.html'; 
+            // Redireciona para a página inicial para garantir que o estado seja atualizado
+            window.location.href = 'index.html';
         }
     });
 }
