@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crie sua Conta - Personalized Gift Shop</title>
-    <link rel="stylesheet" href="css/pag-cadastro.css">
+    <title>Meu Carrinho - Personalized Gift Shop</title>
+    <link rel="stylesheet" href="css/pag-carrinho.css">
 </head>
 <body>
     <header>
-       <div class="logo"><img src="imagens/logomarca V3.png" alt=""></div>
+        <div class="logo"><img src="imagens/logomarca V3.png" alt="Logo Personalized Gift Shop"></div>
         <div class="site-name">Personalized Gift Shop</div>
         <div class="header-actions">
             <form action="resultados.html" method="GET">
@@ -16,7 +16,7 @@
                 <button type="submit" aria-label="Buscar">🔍</button>
             </form>
             <a href="carrinho.html" class="cart-icon" aria-label="Carrinho de Compras">
-                🛒<span id="cart-count" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; vertical-align: top; display: none;">0</span>
+                🛒<span id="cart-count">0</span>
             </a>
         </div>
     </header>
@@ -28,99 +28,41 @@
     </nav>
 
     <main>
-        <section id="register-section" class="content-section active">
-            <div class="login-form-container">
-                
-                <form id="registration-form">
-                    <fieldset>
-                        <legend>Dados Pessoais</legend>
-                        <div>
-                            <label for="nome-completo">Nome Completo:</label>
-                            <input type="text" id="nome-completo" name="nome-completo" required placeholder="Seu nome completo">
-                        </div>
-                        <div class="form-row">
-                            <div>
-                                <label for="email">E-mail:</label>
-                                <input type="email" id="email" name="email" required placeholder="seuemail@exemplo.com">
-                            </div>
-                            <div>
-                                <label for="telefone">Telefone / Celular:</label>
-                                <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX">
-                            </div>
-                        </div>
-                    </fieldset>
+        <h1>Meu Carrinho de Compras</h1>
 
-                    <fieldset>
-                        <legend>Endereço de Entrega</legend>
-                        <div>
-                            <label for="cep">CEP:</label>
-                            <input type="text" id="cep" name="cep" required placeholder="Apenas números">
-                        </div>
-                        <div class="form-row">
-                             <div>
-                                <label for="logradouro">Rua / Avenida:</label>
-                                <input type="text" id="logradouro" name="logradouro" required>
-                            </div>
-                            <div>
-                                <label for="numero">Número:</label>
-                                <input type="text" id="numero" name="numero" required>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="complemento">Complemento (Opcional):</label>
-                            <input type="text" id="complemento" name="complemento" placeholder="Apto, Bloco, Casa">
-                        </div>
-                         <div class="form-row">
-                            <div>
-                                <label for="bairro">Bairro:</label>
-                                <input type="text" id="bairro" name="bairro" required>
-                            </div>
-                            <div>
-                                <label for="cidade">Cidade:</label>
-                                <input type="text" id="cidade" name="cidade" required>
-                            </div>
-                            <div>
-                                <label for="estado">Estado:</label>
-                                <input type="text" id="estado" name="estado" required>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <fieldset>
-                        <legend>Senha de Acesso</legend>
-                        <div class="form-row">
-                            <div>
-                                <label for="senha">Crie uma Senha:</label>
-                                <input type="password" id="senha" name="senha" required minlength="6" placeholder="Mínimo 6 caracteres">
-                            </div>
-                            <div>
-                                <label for="confirmar-senha">Confirme a Senha:</label>
-                                <input type="password" id="confirmar-senha" name="confirmar-senha" required>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                     <fieldset>
-                        <legend>Termos e Condições</legend>
-                        <div class="terms-container">
-                             <input type="checkbox" id="termos" name="termos" required>
-                           <label for="termos">Eu li e aceito os <a href="termos.html" target="_blank">Termos e Condições</a> do site.</label>
-                        </div>
-                    </fieldset>
-                    
-                    <button type="submit">Finalizar Cadastro</button>
-
-                     <p id="registration-error" style="color: red; text-align: center; margin-top: 15px; font-weight: bold;"></p>
-
-             
-
-                </form>
-
+        <!-- Container para o carrinho com itens -->
+        <div id="carrinho-cheio" class="carrinho-container">
+            <div id="lista-produtos-carrinho" class="carrinho-produtos">
+                <!-- Produtos serão inseridos aqui pelo JavaScript -->
             </div>
-        </section>
+
+            <div id="resumo-carrinho" class="carrinho-resumo">
+                <h2>Resumo do Pedido</h2>
+                <div class="resumo-linha">
+                    <span>Subtotal:</span>
+                    <span id="subtotal-valor">R$ 0,00</span>
+                </div>
+                <div class="resumo-linha">
+                    <span>Frete:</span>
+                    <span>R$ 15,00</span> <!-- Valor fixo para exemplo -->
+                </div>
+                <div id="resumo-total" class="resumo-linha">
+                    <span>Total:</span>
+                    <span id="total-valor">R$ 15,00</span>
+                </div>
+                <a href="#" class="btn-checkout">Finalizar Compra</a>
+            </div>
+        </div>
+
+        <!-- Container para o carrinho vazio -->
+        <div id="carrinho-vazio" style="display: none;">
+            <h2>Seu carrinho está vazio.</h2>
+            <p>Adicione produtos para vê-los aqui.</p>
+            <a href="index.html" class="btn-continuar-comprando">Continuar Comprando</a>
+        </div>
     </main>
 
-       <footer>
+    <footer>
         <div class="footer-container">
             <div class="footer-column">
                 <h4>Institucional</h4>
@@ -167,11 +109,98 @@
             </div>
         </div>
     </footer>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const listaProdutosContainer = document.getElementById('lista-produtos-carrinho');
+        const carrinhoCheioContainer = document.getElementById('carrinho-cheio');
+        const carrinhoVazioContainer = document.getElementById('carrinho-vazio');
+        const cartCountHeader = document.querySelector('header #cart-count'); // Contador no header
+        
+        const getCarrinho = () => JSON.parse(localStorage.getItem('carrinho')) || [];
+        const salvarCarrinho = (carrinho) => localStorage.setItem('carrinho', JSON.stringify(carrinho));
 
-    <!-- Carregue os scripts no final -->
-    <script type="module" src="js/supabaseClient.js"></script>
-    <script type="module" src="js/auth.js"></script>
-    <script type="module" src="js/script.js"></script>
+        const renderizarCarrinho = () => {
+            const carrinho = getCarrinho();
+            listaProdutosContainer.innerHTML = '';
 
+            if (carrinho.length === 0) {
+                carrinhoCheioContainer.style.display = 'none';
+                carrinhoVazioContainer.style.display = 'block';
+            } else {
+                carrinhoCheioContainer.style.display = 'flex';
+                carrinhoVazioContainer.style.display = 'none';
+                carrinho.forEach(item => {
+                    const produtoHTML = `
+                        <div class="produto-carrinho" data-id="${item.id}">
+                            <img src="${item.customization || item.image}" alt="${item.name}">
+                            <div class="produto-info">
+                                <h3>${item.name}</h3>
+                                <p>Preço: R$ ${parseFloat(item.price).toFixed(2)}</p>
+                            </div>
+                            <div class="produto-qtd">
+                                <button class="btn-diminuir-qtd">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="btn-aumentar-qtd">+</button>
+                            </div>
+                            <div class="produto-remover">
+                                <button class="btn-remover-item">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                    listaProdutosContainer.innerHTML += produtoHTML;
+                });
+            }
+            
+            atualizarResumo();
+            atualizarContadorCarrinho();
+        };
+
+        const atualizarResumo = () => {
+            const carrinho = getCarrinho();
+            const subtotal = carrinho.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            const frete = carrinho.length > 0 ? 15.00 : 0; // Frete só se tiver item
+            const total = subtotal + frete;
+
+            document.getElementById('subtotal-valor').textContent = `R$ ${subtotal.toFixed(2)}`;
+            document.getElementById('total-valor').textContent = `R$ ${total.toFixed(2)}`;
+        };
+        
+        const atualizarContadorCarrinho = () => {
+            const carrinho = getCarrinho();
+            const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
+            if (cartCountHeader) {
+                cartCountHeader.textContent = totalItens;
+                cartCountHeader.style.display = totalItens > 0 ? 'inline' : 'none';
+            }
+        };
+
+        listaProdutosContainer.addEventListener('click', (e) => {
+            const produtoDiv = e.target.closest('.produto-carrinho');
+            if (!produtoDiv) return;
+
+            const produtoId = produtoDiv.dataset.id;
+            let carrinho = getCarrinho();
+            const itemIndex = carrinho.findIndex(item => item.id == produtoId);
+            if (itemIndex === -1) return;
+
+            if (e.target.classList.contains('btn-aumentar-qtd')) {
+                carrinho[itemIndex].quantity++;
+            } else if (e.target.classList.contains('btn-diminuir-qtd')) {
+                carrinho[itemIndex].quantity--;
+                if (carrinho[itemIndex].quantity <= 0) {
+                    carrinho.splice(itemIndex, 1);
+                }
+            } else if (e.target.classList.contains('btn-remover-item')) {
+                carrinho.splice(itemIndex, 1);
+            }
+            
+            salvarCarrinho(carrinho);
+            renderizarCarrinho();
+        });
+        
+        renderizarCarrinho();
+    });
+    </script>
 </body>
 </html>
