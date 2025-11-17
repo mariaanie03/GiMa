@@ -13,52 +13,38 @@ console.log('auth.js carregado');
 function updateUserUI(user) {
     // Só executa esta lógica se estiver na página inicial (onde os elementos existem)
     if (document.getElementById('home-content')) {
-        // Elementos da navegação
         const loginLink = document.getElementById('login-nav-link');
         const logoutLink = document.getElementById('logout-nav-link');
         const homeLink = document.getElementById('home-nav-link');
         const aboutLink = document.getElementById('about-nav-link');
-
-        // Seções de conteúdo na index.html
         const homeContent = document.getElementById('home-content');
         const loggedInContent = document.getElementById('logged-in-content');
         const loginContent = document.getElementById('login-content');
 
         if (user) {
             // --- USUÁRIO ESTÁ LOGADO ---
-            if (loginLink) loginLink.style.display = 'none';
-            if (logoutLink) logoutLink.style.display = 'list-item'; // 'list-item' para manter o estilo de <li>
+            loginLink.style.display = 'none';
+            logoutLink.style.display = 'list-item';
             
-            // Mostra o conteúdo para usuários logados
             homeContent.classList.remove('active');
             loggedInContent.classList.add('active');
             loginContent.classList.remove('active');
 
-            // Ajusta o link "Home" para mostrar a seção correta e o marca como ativo
-            if (homeLink) {
-                 homeLink.querySelector('span').dataset.target = 'logged-in-content';
-                 homeLink.querySelector('span').classList.add('active');
-            }
-             if (aboutLink) aboutLink.querySelector('span').classList.remove('active');
-
-
+            homeLink.querySelector('span').dataset.target = 'logged-in-content';
+            homeLink.querySelector('span').classList.add('active');
+            aboutLink.querySelector('span').classList.remove('active');
         } else {
             // --- USUÁRIO NÃO ESTÁ LOGADO ---
-            if (loginLink) loginLink.style.display = 'list-item';
-            if (logoutLink) logoutLink.style.display = 'none';
+            loginLink.style.display = 'list-item';
+            logoutLink.style.display = 'none';
 
-            // Mostra o conteúdo padrão para visitantes
             homeContent.classList.add('active');
             loggedInContent.classList.remove('active');
             loginContent.classList.remove('active');
 
-
-            // Ajusta o link "Home" para mostrar a seção correta e o marca como ativo
-            if (homeLink) {
-                homeLink.querySelector('span').dataset.target = 'home-content';
-                homeLink.querySelector('span').classList.add('active');
-            }
-             if (aboutLink) aboutLink.querySelector('span').classList.remove('active');
+            homeLink.querySelector('span').dataset.target = 'home-content';
+            homeLink.querySelector('span').classList.add('active');
+            aboutLink.querySelector('span').classList.remove('active');
         }
     }
 }
@@ -78,9 +64,13 @@ supabase.auth.onAuthStateChange((event, session) => {
 // --- LÓGICA PARA A PÁGINA DE CADASTRO ---
 const registrationForm = document.getElementById('registration-form');
 if (registrationForm) {
-    registrationForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Impede o envio padrão do formulário
+    const errorMessage = document.getElementById('registration-error');
 
+    registrationForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); 
+        errorMessage.textContent = '';
+
+        // Coleta todos os dados do formulário
         const nomeCompleto = document.getElementById('nome-completo').value;
         const email = document.getElementById('email').value;
         const telefone = document.getElementById('telefone').value;
@@ -88,13 +78,23 @@ if (registrationForm) {
         const confirmarSenha = document.getElementById('confirmar-senha').value;
         const termos = document.getElementById('termos').checked;
 
-        // Validação dos campos
-        if (!termos) { return alert('Você precisa aceitar os Termos e Condições.'); }
-        if (senha !== confirmarSenha) { return alert('As senhas não coincidem!'); }
-        if (senha.length < 6) { return alert('A senha deve ter no mínimo 6 caracteres.'); }
+        // Validações
+        if (!termos || !nomeCompleto || !email || !senha) { 
+            errorMessage.textContent = 'Por favor, preencha todos os campos obrigatórios.';
+            return; 
+        }
+        if (senha !== confirmarSenha) { 
+            errorMessage.textContent = 'As senhas não coincidem!';
+            return; 
+        }
+        if (senha.length < 6) { 
+            errorMessage.textContent = 'A senha deve ter no mínimo 6 caracteres.';
+            return; 
+        }
 
         try {
-            // ETAPA 1: Registrar o usuário (email e senha) no Supabase Auth
+            // ETAPA 1: Criar o usuário no sistema de autenticação.
+            // O gatilho no Supabase irá criar a linha básica no 'profiles' automaticamente.
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: email,
                 password: senha,
@@ -102,28 +102,30 @@ if (registrationForm) {
 
             if (authError) throw authError;
 
-            // Se o cadastro foi bem-sucedido, authData.user conterá os dados do novo usuário
+            // ETAPA 2: ATUALIZAR o perfil que o gatilho criou com os dados adicionais do formulário.
             if (authData.user) {
-                // ETAPA 2: Inserir os dados adicionais na tabela 'profiles'
-                const { error: profileError } = await supabase
+                const { error: updateError } = await supabase
                     .from('profiles')
-                    .insert([{
-                        id_profiles: authData.user.id,
+                    .update({
                         full_name: nomeCompleto,
-                        telefone: telefone,
-                        email: email,
-                        role: 'user' // Garante que todo novo cadastro tenha a função 'user' por padrão
-                    }]);
+                        telefone: telefone
+                    })
+                    .eq('id_profiles', authData.user.id);
 
-                if (profileError) throw profileError;
-
-                alert('Cadastro realizado com sucesso! Você será redirecionado.');
-                window.location.href = 'index.html'; // Redireciona para a home após o cadastro
+                if (updateError) throw updateError;
             }
 
+            alert('Cadastro realizado com sucesso! Você será redirecionado para o login.');
+            window.location.href = 'index.html?section=login';
+
         } catch (error) {
-            console.error('Erro durante o cadastro:', error);
-            alert('Falha no cadastro: ' + error.message);
+            console.error('Erro detalhado do cadastro:', error);
+
+            if (error.message.includes("User already registered")) {
+                errorMessage.textContent = "Este e-mail já está cadastrado. Tente fazer o login.";
+            } else {
+                errorMessage.textContent = 'Falha no cadastro. Verifique os dados e tente novamente.';
+            }
         }
     });
 }
@@ -138,7 +140,6 @@ if (loginForm) {
         const senha = document.getElementById('login-senha').value;
 
         try {
-            // 1. Tenta fazer o login do usuário
             const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: senha,
@@ -146,24 +147,21 @@ if (loginForm) {
 
             if (loginError) throw loginError;
 
-            // 2. Se o login for bem-sucedido, busca o perfil para verificar a 'role'
             if (loginData.user) {
                 const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('role')
                     .eq('id_profiles', loginData.user.id)
-                    .single(); // .single() para garantir que retorne apenas um objeto
+                    .single();
 
                 if (profileError) throw profileError;
-
-                // 3. Verifica a 'role' e redireciona se for admin
+                
                 if (profile && profile.role === 'admin') {
                     alert('Bem-vindo, Administrador!');
-                    window.location.href = 'admin.html'; // Redireciona para a página de admin
+                    window.location.href = 'admin.html';
                 } else {
                     alert('Login bem-sucedido!');
-                    // Para usuários comuns, o onAuthStateChange já cuidará de atualizar a UI,
-                    // então não precisamos de um redirecionamento aqui.
+                    // Para usuários comuns, o onAuthStateChange cuidará de atualizar a UI.
                 }
             }
         } catch (error) {
@@ -182,7 +180,6 @@ if(logoutButton) {
             alert('Erro ao sair: ' + error.message);
         } else {
             alert('Você saiu da sua conta.');
-            // Garante que a página seja recarregada para o estado de "deslogado"
             window.location.href = 'index.html'; 
         }
     });
