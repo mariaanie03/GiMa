@@ -70,7 +70,6 @@ if (registrationForm) {
         e.preventDefault(); 
         errorMessage.textContent = '';
 
-        // Coleta todos os dados do formulário
         const nomeCompleto = document.getElementById('nome-completo').value;
         const email = document.getElementById('email').value;
         const telefone = document.getElementById('telefone').value;
@@ -78,7 +77,6 @@ if (registrationForm) {
         const confirmarSenha = document.getElementById('confirmar-senha').value;
         const termos = document.getElementById('termos').checked;
 
-        // Validações
         if (!termos || !nomeCompleto || !email || !senha) { 
             errorMessage.textContent = 'Por favor, preencha todos os campos obrigatórios.';
             return; 
@@ -93,8 +91,6 @@ if (registrationForm) {
         }
 
         try {
-            // ETAPA 1: Criar o usuário no sistema de autenticação.
-            // O gatilho no Supabase irá criar a linha básica no 'profiles' automaticamente.
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: email,
                 password: senha,
@@ -102,8 +98,10 @@ if (registrationForm) {
 
             if (authError) throw authError;
 
-            // ETAPA 2: ATUALIZAR o perfil que o gatilho criou com os dados adicionais do formulário.
             if (authData.user) {
+                // Após o signUp, o gatilho cria a linha no 'profiles'.
+                // Agora, ATUALIZAMOS essa linha com os dados do formulário.
+                // Isso funcionará por causa da política RLS que criamos.
                 const { error: updateError } = await supabase
                     .from('profiles')
                     .update({
@@ -120,7 +118,6 @@ if (registrationForm) {
 
         } catch (error) {
             console.error('Erro detalhado do cadastro:', error);
-
             if (error.message.includes("User already registered")) {
                 errorMessage.textContent = "Este e-mail já está cadastrado. Tente fazer o login.";
             } else {
@@ -162,6 +159,7 @@ if (loginForm) {
                 } else {
                     alert('Login bem-sucedido!');
                     // Para usuários comuns, o onAuthStateChange cuidará de atualizar a UI.
+                    // Não é necessário redirecionar aqui.
                 }
             }
         } catch (error) {
@@ -180,6 +178,7 @@ if(logoutButton) {
             alert('Erro ao sair: ' + error.message);
         } else {
             alert('Você saiu da sua conta.');
+            // Garante que a página recarregue para o estado de "deslogado"
             window.location.href = 'index.html'; 
         }
     });
