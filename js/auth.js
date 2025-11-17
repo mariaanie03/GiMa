@@ -67,14 +67,18 @@ if (registrationForm) {
     registrationForm.addEventListener('submit', async (e) => {
         e.preventDefault(); 
 
-        // CORREÇÃO DEFINITIVA: A variável é declarada DENTRO do evento,
-        // garantindo que o elemento HTML já existe quando o código for executado.
+        // A CORREÇÃO ESTÁ AQUI: A variável é definida DENTRO do evento de clique.
+        // Isso garante que o elemento HTML já existe quando este código for executado.
         const errorMessage = document.getElementById('registration-error');
+        
+        // Uma verificação extra para segurança total
         if (!errorMessage) {
-            console.error("Elemento 'registration-error' não encontrado no HTML!");
+            console.error("ERRO CRÍTICO: O elemento com id 'registration-error' não foi encontrado no HTML!");
             return;
         }
-        errorMessage.textContent = ''; // Limpa mensagens de erro antigas
+
+        // Esta linha agora é segura e o "x" vermelho vai desaparecer.
+        errorMessage.textContent = ''; 
 
         const nomeCompleto = document.getElementById('nome-completo').value;
         const email = document.getElementById('email').value;
@@ -125,6 +129,7 @@ if (registrationForm) {
             }
         }
     });
+
 }
 
 // --- LÓGICA PARA O FORMULÁRIO DE LOGIN ---
