@@ -8,16 +8,17 @@
 </head>
 <body>
     <header>
-        <div class="logo"><img src="imagens/logomarca V3.png" alt=""></div>
+        <div class="logo"><img src="imagens/logomarca V3.png" alt="Logo Personalized Gift Shop"></div>
         <div class="site-name">Personalized Gift Shop</div>
         <div class="header-actions">
             <form id="search-form" action="resultados.html" method="GET">
                 <input type="search" id="search-input" name="q" placeholder="Buscar..." required>
                 <button type="submit" aria-label="Buscar">🔍</button>
             </form>
-<a href="carrinho.html" class="cart-icon" aria-label="Carrinho de Compras">
-    🛒<span id="cart-count" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; vertical-align: top; display: none;">0</span>
-</a>        </div>
+            <a href="carrinho.html" class="cart-icon" aria-label="Carrinho de Compras">
+                🛒<span id="cart-count" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; vertical-align: top; display: none;">0</span>
+            </a>
+        </div>
     </header>
 
     <nav class="main-nav">
@@ -38,14 +39,12 @@
                 
                 <button id="btn-add-carrinho" class="btn-produto-acao">Adicionar ao Carrinho</button>
                 
-                <!-- O BOTÃO AGORA É UM LINK (<a>) PARA NAVEGAÇÃO -->
                 <a id="btn-personalizar" class="btn-produto-acao" href="metodos-personalizacao.html">Personalizar Produto</a>
             </div>
         </div>
     </main>
 
     <footer>
-        <!-- O conteúdo do footer permanece o mesmo -->
         <div class="footer-container">
             <div class="footer-column">
                 <h4>Institucional</h4>
@@ -66,11 +65,11 @@
             <div class="footer-column">
                 <h4>Redes Sociais</h4>
                 <div class="social-icons">
-                    <a href="#" aria-label="Instagram">IG</a>
-                    <a href="#" aria-label="Facebook">FB</a>
-                    <a href="#" aria-label="Pinterest">PI</a>
-                    <a href="#" aria-label="Tik Tok">TK</a>
-                    <a href="#" aria-label="Twitter">X</a>
+                    <a href="https://www.instagram.com/SEU_USUARIO_AQUI" target="_blank" rel="noopener noreferrer" aria-label="Instagram">IG</a>
+                    <a href="https://www.facebook.com/SEU_USUARIO_AQUI" target="_blank" rel="noopener noreferrer" aria-label="Facebook">FB</a>
+                    <a href="https://www.pinterest.com/SEU_USUARIO_AQUI" target="_blank" rel="noopener noreferrer" aria-label="Pinterest">PI</a>
+                    <a href="https://www.tiktok.com/@SEU_USUARIO_AQUI" target="_blank" rel="noopener noreferrer" aria-label="Tik Tok">TK</a>
+                    <a href="https://www.twitter.com/SEU_USUARIO_AQUI" target="_blank" rel="noopener noreferrer" aria-label="Twitter">X</a>
                 </div>
             </div>
             <div class="footer-column">
@@ -94,74 +93,86 @@
     </footer>
 
 
-<!-- 1. Carrega a conexão com o Supabase PRIMEIRO -->
-<script type="module" src="js/supabaseClient.js"></script>
+    <!-- 1. Carrega a conexão com o Supabase PRIMEIRO -->
+    <script type="module" src="js/supabaseClient.js"></script>
 
-<!-- 2. Carrega o script principal que usa a conexão -->
-<script type="module" src="js/script.js"></script>
+    <!-- 2. Carrega o script principal que busca os detalhes do produto -->
+    <script type="module" src="js/script.js"></script>
 
-<!-- 3. Carrega a lógica de adicionar ao carrinho -->
-<script type="module">
-document.addEventListener('DOMContentLoaded', () => {
-    const btnAdicionar = document.getElementById('btn-add-carrinho');
-    const urlParams = new URLSearchParams(window.location.search);
-    const produtoId = urlParams.get('id');
+    <!-- 3. Carrega a lógica de adicionar ao carrinho com proteção de login -->
+    <script type="module">
+        // Importa o supabase para podermos verificar o login
+        import { supabase } from './js/supabaseClient.js';
 
-    if (btnAdicionar && produtoId) {
-        btnAdicionar.addEventListener('click', () => {
-            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-            const personalizacao = localStorage.getItem('produtoPersonalizado');
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnAdicionar = document.getElementById('btn-add-carrinho');
+            const urlParams = new URLSearchParams(window.location.search);
+            const produtoId = urlParams.get('id');
 
-            // Pega os dados DEPOIS que a página carregou as informações do produto
-            const nomeProduto = document.getElementById('produto-nome').textContent;
-            const precoProdutoTexto = document.getElementById('produto-preco').textContent;
+            if (btnAdicionar && produtoId) {
+                // Transformamos o evento de clique em uma função 'async' para usar o supabase
+                btnAdicionar.addEventListener('click', async () => {
+                    
+                    // 1. VERIFICAR SE O USUÁRIO ESTÁ LOGADO
+                    const { data: { session } } = await supabase.auth.getSession();
 
-            // VERIFICAÇÃO DE SEGURANÇA: Não adiciona ao carrinho se os dados não carregaram
-            if (nomeProduto === 'Carregando nome...' || !precoProdutoTexto.includes('R$')) {
-                alert('Erro: Os detalhes do produto ainda não foram carregados. Por favor, aguarde e tente novamente.');
-                return;
+                    if (session) {
+                        // --- USUÁRIO ESTÁ LOGADO: LÓGICA NORMAL ---
+                        const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+                        const personalizacao = localStorage.getItem('produtoPersonalizado');
+
+                        const nomeProduto = document.getElementById('produto-nome').textContent;
+                        const precoProdutoTexto = document.getElementById('produto-preco').textContent;
+
+                        if (nomeProduto === 'Carregando nome...' || !precoProdutoTexto.includes('R$')) {
+                            alert('Erro: Os detalhes do produto ainda não foram carregados.');
+                            return;
+                        }
+
+                        const produto = {
+                            id: produtoId,
+                            name: nomeProduto,
+                            price: parseFloat(precoProdutoTexto.replace('R$ ', '').replace(',', '.')),
+                            image: document.getElementById('produto-imagem').src,
+                            quantity: 1,
+                            customization: personalizacao || null
+                        };
+
+                        const itemExistente = carrinho.find(item => item.id === produto.id && item.customization === produto.customization);
+                        if (itemExistente) {
+                            itemExistente.quantity++;
+                        } else {
+                            carrinho.push(produto);
+                        }
+
+                        localStorage.setItem('carrinho', JSON.stringify(carrinho));
+                        if (personalizacao) {
+                            localStorage.removeItem('produtoPersonalizado');
+                        }
+
+                        alert(`"${produto.name}" foi adicionado ao carrinho!`);
+                        atualizarContadorCarrinhoHeader();
+
+                    } else {
+                        // --- USUÁRIO NÃO ESTÁ LOGADO: AVISO E REDIRECIONAMENTO ---
+                        alert('Você precisa fazer login para adicionar produtos ao carrinho.');
+                        window.location.href = 'index.html?section=login';
+                    }
+                });
             }
-
-            const produto = {
-                id: produtoId,
-                name: nomeProduto,
-                price: parseFloat(precoProdutoTexto.replace('R$ ', '').replace(',', '.')),
-                image: document.getElementById('produto-imagem').src,
-                quantity: 1,
-                customization: personalizacao || null
+            
+            const atualizarContadorCarrinhoHeader = () => {
+                const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+                const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
+                const contador = document.getElementById('cart-count');
+                if(contador) {
+                    contador.textContent = totalItens;
+                    contador.style.display = totalItens > 0 ? 'inline' : 'none';
+                }
             };
-
-            const itemExistente = carrinho.find(item => item.id === produto.id && item.customization === produto.customization);
-            if (itemExistente) {
-                itemExistente.quantity++;
-            } else {
-                carrinho.push(produto);
-            }
-
-            localStorage.setItem('carrinho', JSON.stringify(carrinho));
-            if (personalizacao) {
-                localStorage.removeItem('produtoPersonalizado');
-            }
-
-            alert(`"${produto.name}" foi adicionado ao carrinho!`);
+            
             atualizarContadorCarrinhoHeader();
         });
-    }
-    
-    const atualizarContadorCarrinhoHeader = () => {
-        const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-        const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
-        const contador = document.getElementById('cart-count');
-        if(contador) {
-            contador.textContent = totalItens;
-            contador.style.display = totalItens > 0 ? 'inline' : 'none';
-        }
-    };
-    
-    atualizarContadorCarrinhoHeader();
-});
-</script>
-
- <script type="module" src="js/script.js"></script>
+    </script>
 </body>
 </html>

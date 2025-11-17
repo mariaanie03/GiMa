@@ -28,37 +28,46 @@
     </nav>
 
     <main>
-        <h1>Meu Carrinho de Compras</h1>
+        <!-- Container que só aparece se o usuário estiver LOGADO -->
+        <div id="carrinho-logado" style="display: none;">
+            <h1>Meu Carrinho de Compras</h1>
 
-        <!-- Container para o carrinho com itens -->
-        <div id="carrinho-cheio" class="carrinho-container">
-            <div id="lista-produtos-carrinho" class="carrinho-produtos">
-                <!-- Produtos serão inseridos aqui pelo JavaScript -->
+            <!-- Container para o carrinho COM itens -->
+            <div id="carrinho-cheio" class="carrinho-container">
+                <div id="lista-produtos-carrinho" class="carrinho-produtos">
+                    <!-- Produtos são inseridos aqui pelo JavaScript -->
+                </div>
+                <div id="resumo-carrinho" class="carrinho-resumo">
+                    <h2>Resumo do Pedido</h2>
+                    <div class="resumo-linha">
+                        <span>Subtotal:</span>
+                        <span id="subtotal-valor">R$ 0,00</span>
+                    </div>
+                    <div class="resumo-linha">
+                        <span>Frete:</span>
+                        <span id="frete-valor">R$ 0,00</span>
+                    </div>
+                    <div id="resumo-total" class="resumo-linha">
+                        <span>Total:</span>
+                        <span id="total-valor">R$ 0,00</span>
+                    </div>
+                    <a href="#" class="btn-checkout">Finalizar Compra</a>
+                </div>
             </div>
 
-            <div id="resumo-carrinho" class="carrinho-resumo">
-                <h2>Resumo do Pedido</h2>
-                <div class="resumo-linha">
-                    <span>Subtotal:</span>
-                    <span id="subtotal-valor">R$ 0,00</span>
-                </div>
-                <div class="resumo-linha">
-                    <span>Frete:</span>
-                    <span>R$ 15,00</span> <!-- Valor fixo para exemplo -->
-                </div>
-                <div id="resumo-total" class="resumo-linha">
-                    <span>Total:</span>
-                    <span id="total-valor">R$ 15,00</span>
-                </div>
-                <a href="#" class="btn-checkout">Finalizar Compra</a>
+            <!-- Container para o carrinho VAZIO -->
+            <div id="carrinho-vazio" style="display: none; text-align: center; padding: 50px;">
+                <h2>Seu carrinho está vazio.</h2>
+                <p>Adicione produtos para vê-los aqui.</p>
+                <a href="index.html" class="btn-continuar-comprando">Continuar Comprando</a>
             </div>
         </div>
 
-        <!-- Container para o carrinho vazio -->
-        <div id="carrinho-vazio" style="display: none;">
-            <h2>Seu carrinho está vazio.</h2>
-            <p>Adicione produtos para vê-los aqui.</p>
-            <a href="index.html" class="btn-continuar-comprando">Continuar Comprando</a>
+        <!-- Container que só aparece se o usuário NÃO ESTIVER LOGADO -->
+        <div id="carrinho-deslogado" style="display: none; text-align: center; padding: 50px;">
+            <h2>Você precisa estar logado para ver seu carrinho.</h2>
+            <p>Faça o login ou crie sua conta para continuar suas compras.</p>
+            <a href="index.html?section=login" class="btn-continuar-comprando">Ir para o Login</a>
         </div>
     </main>
 
@@ -83,11 +92,11 @@
             <div class="footer-column">
                 <h4>Redes Sociais</h4>
                 <div class="social-icons">
-                    <a href="#" aria-label="Instagram">IG</a>
-                    <a href="#" aria-label="Facebook">FB</a>
-                    <a href="#" aria-label="Pinterest">PI</a>
-                    <a href="#" aria-label="Tik Tok">TK</a>
-                    <a href="#" aria-label="Twitter">X</a>
+                    <a href="https://www.instagram.com/SEU_USUARIO_AQUI" target="_blank" rel="noopener noreferrer" aria-label="Instagram">IG</a>
+                    <a href="https://www.facebook.com/SEU_USUARIO_AQUI" target="_blank" rel="noopener noreferrer" aria-label="Facebook">FB</a>
+                    <a href="https://www.pinterest.com/SEU_USUARIO_AQUI" target="_blank" rel="noopener noreferrer" aria-label="Pinterest">PI</a>
+                    <a href="https://www.tiktok.com/@SEU_USUARIO_AQUI" target="_blank" rel="noopener noreferrer" aria-label="Tik Tok">TK</a>
+                    <a href="https://www.twitter.com/SEU_USUARIO_AQUI" target="_blank" rel="noopener noreferrer" aria-label="Twitter">X</a>
                 </div>
             </div>
             <div class="footer-column">
@@ -110,97 +119,132 @@
         </div>
     </footer>
     
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const listaProdutosContainer = document.getElementById('lista-produtos-carrinho');
-        const carrinhoCheioContainer = document.getElementById('carrinho-cheio');
-        const carrinhoVazioContainer = document.getElementById('carrinho-vazio');
-        const cartCountHeader = document.querySelector('header #cart-count'); // Contador no header
-        
-        const getCarrinho = () => JSON.parse(localStorage.getItem('carrinho')) || [];
-        const salvarCarrinho = (carrinho) => localStorage.setItem('carrinho', JSON.stringify(carrinho));
+    <!-- Carrega o supabase primeiro -->
+    <script type="module" src="js/supabaseClient.js"></script>
 
-        const renderizarCarrinho = () => {
-            const carrinho = getCarrinho();
-            listaProdutosContainer.innerHTML = '';
+    <!-- Script da página do carrinho com proteção de login -->
+    <script type="module">
+        import { supabase } from './js/supabaseClient.js';
 
-            if (carrinho.length === 0) {
-                carrinhoCheioContainer.style.display = 'none';
-                carrinhoVazioContainer.style.display = 'block';
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. VERIFICA O STATUS DE LOGIN ASSIM QUE A PÁGINA CARREGA
+            const { data: { session } } = await supabase.auth.getSession();
+
+            const carrinhoLogadoDiv = document.getElementById('carrinho-logado');
+            const carrinhoDeslogadoDiv = document.getElementById('carrinho-deslogado');
+
+            if (session) {
+                // --- USUÁRIO ESTÁ LOGADO ---
+                carrinhoLogadoDiv.style.display = 'block';
+                carrinhoDeslogadoDiv.style.display = 'none';
+                
+                // Executa a lógica normal de renderização do carrinho
+                iniciarLogicaCarrinho();
             } else {
-                carrinhoCheioContainer.style.display = 'flex';
-                carrinhoVazioContainer.style.display = 'none';
-                carrinho.forEach(item => {
-                    const produtoHTML = `
-                        <div class="produto-carrinho" data-id="${item.id}">
-                            <img src="${item.customization || item.image}" alt="${item.name}">
-                            <div class="produto-info">
-                                <h3>${item.name}</h3>
-                                <p>Preço: R$ ${parseFloat(item.price).toFixed(2)}</p>
-                            </div>
-                            <div class="produto-qtd">
-                                <button class="btn-diminuir-qtd">-</button>
-                                <span>${item.quantity}</span>
-                                <button class="btn-aumentar-qtd">+</button>
-                            </div>
-                            <div class="produto-remover">
-                                <button class="btn-remover-item">🗑️</button>
-                            </div>
-                        </div>
-                    `;
-                    listaProdutosContainer.innerHTML += produtoHTML;
-                });
+                // --- USUÁRIO NÃO ESTÁ LOGADO ---
+                carrinhoLogadoDiv.style.display = 'none';
+                carrinhoDeslogadoDiv.style.display = 'block';
+                // Limpa o carrinho local para não vazar informações se outro usuário logar
+                localStorage.removeItem('carrinho');
+                atualizarContadorCarrinhoHeader(); // Garante que o contador do header zere
             }
-            
-            atualizarResumo();
-            atualizarContadorCarrinho();
-        };
-
-        const atualizarResumo = () => {
-            const carrinho = getCarrinho();
-            const subtotal = carrinho.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            const frete = carrinho.length > 0 ? 15.00 : 0; // Frete só se tiver item
-            const total = subtotal + frete;
-
-            document.getElementById('subtotal-valor').textContent = `R$ ${subtotal.toFixed(2)}`;
-            document.getElementById('total-valor').textContent = `R$ ${total.toFixed(2)}`;
-        };
-        
-        const atualizarContadorCarrinho = () => {
-            const carrinho = getCarrinho();
-            const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
-            if (cartCountHeader) {
-                cartCountHeader.textContent = totalItens;
-                cartCountHeader.style.display = totalItens > 0 ? 'inline' : 'none';
-            }
-        };
-
-        listaProdutosContainer.addEventListener('click', (e) => {
-            const produtoDiv = e.target.closest('.produto-carrinho');
-            if (!produtoDiv) return;
-
-            const produtoId = produtoDiv.dataset.id;
-            let carrinho = getCarrinho();
-            const itemIndex = carrinho.findIndex(item => item.id == produtoId);
-            if (itemIndex === -1) return;
-
-            if (e.target.classList.contains('btn-aumentar-qtd')) {
-                carrinho[itemIndex].quantity++;
-            } else if (e.target.classList.contains('btn-diminuir-qtd')) {
-                carrinho[itemIndex].quantity--;
-                if (carrinho[itemIndex].quantity <= 0) {
-                    carrinho.splice(itemIndex, 1);
-                }
-            } else if (e.target.classList.contains('btn-remover-item')) {
-                carrinho.splice(itemIndex, 1);
-            }
-            
-            salvarCarrinho(carrinho);
-            renderizarCarrinho();
         });
         
-        renderizarCarrinho();
-    });
+        // Função para atualizar o contador no header (pode ser chamada de vários lugares)
+        const atualizarContadorCarrinhoHeader = () => {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
+            const contador = document.getElementById('cart-count');
+            if(contador) {
+                contador.textContent = totalItens;
+                contador.style.display = totalItens > 0 ? 'inline' : 'none';
+            }
+        };
+
+        // Toda a lógica de manipulação do carrinho agora está dentro desta função
+        function iniciarLogicaCarrinho() {
+            const listaProdutosContainer = document.getElementById('lista-produtos-carrinho');
+            const carrinhoCheioContainer = document.getElementById('carrinho-cheio');
+            const carrinhoVazioContainer = document.getElementById('carrinho-vazio');
+            
+            const getCarrinho = () => JSON.parse(localStorage.getItem('carrinho')) || [];
+            const salvarCarrinho = (carrinho) => localStorage.setItem('carrinho', JSON.stringify(carrinho));
+
+            const renderizarCarrinho = () => {
+                const carrinho = getCarrinho();
+                listaProdutosContainer.innerHTML = '';
+
+                if (carrinho.length === 0) {
+                    carrinhoCheioContainer.style.display = 'none';
+                    carrinhoVazioContainer.style.display = 'block';
+                } else {
+                    carrinhoCheioContainer.style.display = 'flex';
+                    carrinhoVazioContainer.style.display = 'none';
+                    carrinho.forEach(item => {
+                        const produtoHTML = `
+                            <div class="produto-carrinho" data-id="${item.id}" data-custom="${item.customization || ''}">
+                                <img src="${item.customization || item.image}" alt="${item.name}">
+                                <div class="produto-info">
+                                    <h3>${item.name}</h3>
+                                    <p>Preço: R$ ${parseFloat(item.price).toFixed(2)}</p>
+                                </div>
+                                <div class="produto-qtd">
+                                    <button class="btn-diminuir-qtd">-</button>
+                                    <span>${item.quantity}</span>
+                                    <button class="btn-aumentar-qtd">+</button>
+                                </div>
+                                <div class="produto-remover">
+                                    <button class="btn-remover-item">🗑️</button>
+                                </div>
+                            </div>
+                        `;
+                        listaProdutosContainer.innerHTML += produtoHTML;
+                    });
+                }
+                atualizarResumo();
+                atualizarContadorCarrinhoHeader();
+            };
+
+            const atualizarResumo = () => {
+                const carrinho = getCarrinho();
+                const subtotal = carrinho.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+                const frete = carrinho.length > 0 ? 15.00 : 0; // Frete só é cobrado se houver itens
+                const total = subtotal + frete;
+
+                document.getElementById('subtotal-valor').textContent = `R$ ${subtotal.toFixed(2)}`;
+                document.getElementById('frete-valor').textContent = `R$ ${frete.toFixed(2)}`;
+                document.getElementById('total-valor').textContent = `R$ ${total.toFixed(2)}`;
+            };
+
+            listaProdutosContainer.addEventListener('click', (e) => {
+                const produtoDiv = e.target.closest('.produto-carrinho');
+                if (!produtoDiv) return;
+
+                const produtoId = produtoDiv.dataset.id;
+                const customizacao = produtoDiv.dataset.custom;
+                
+                let carrinho = getCarrinho();
+                const itemIndex = carrinho.findIndex(item => item.id === produtoId && (item.customization || '') === customizacao);
+                if (itemIndex === -1) return;
+
+                if (e.target.classList.contains('btn-aumentar-qtd')) {
+                    carrinho[itemIndex].quantity++;
+                } else if (e.target.classList.contains('btn-diminuir-qtd')) {
+                    carrinho[itemIndex].quantity--;
+                    if (carrinho[itemIndex].quantity <= 0) {
+                        carrinho.splice(itemIndex, 1);
+                    }
+                } else if (e.target.classList.contains('btn-remover-item')) {
+                    carrinho.splice(itemIndex, 1);
+                }
+                
+                salvarCarrinho(carrinho);
+                renderizarCarrinho();
+            });
+            
+            // Primeira renderização ao iniciar a lógica
+            renderizarCarrinho();
+        }
     </script>
 </body>
 </html>
