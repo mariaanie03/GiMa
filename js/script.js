@@ -1,49 +1,74 @@
 import { supabase } from './supabaseClient.js';
+
+// Função para carregar os produtos na grade da página principal (para usuários logados)
+async function loadMainProducts() {
+    const grid = document.getElementById('product-grid-main');
+    // Só executa se o elemento da grade existir na página
+    if (!grid) return;
+
+    console.log("Carregando produtos na página principal...");
+
+    const { data: produtos, error } = await supabase
+        .from('produtos')
+        .select('*')
+        .order('nome', { ascending: true }); // Opcional: ordena os produtos por nome
+
+    if (error) {
+        console.error('Erro ao carregar produtos:', error);
+        grid.innerHTML = '<p>Erro ao carregar os produtos. Tente novamente mais tarde.</p>';
+        return;
+    }
+
+    if (produtos && produtos.length > 0) {
+        grid.innerHTML = produtos.map(produto => `
+            <div class="produto-card-main">
+                <img src="${produto.imagem_url}" alt="${produto.nome}">
+                <div>
+                    <h3>${produto.nome}</h3>
+                    <p class="preco">R$ ${produto.preco}</p>
+                </div>
+                <button class="btn-ver-detalhes" onclick="verDetalhes('${produto.id_produtos}')">Ver Detalhes</button>
+            </div>
+        `).join('');
+    } else {
+        grid.innerHTML = '<p>Nenhum produto encontrado no momento.</p>';
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
-   
-    // NOTA: O array 'todosOsProdutos' foi REMOVIDO. Os dados agora vêm do banco de dados.
 
     // ===================================================================
-    // --- LÓGICA GLOBAL (FUNCIONA EM TODAS AS PÁGINAS) ---
+    // --- LÓGICA ESPECÍFICA DA PÁGINA INICIAL (index.html) ---
     // ===================================================================
-    const cartIconButton = document.getElementById('cart-icon-btn');
-    if (cartIconButton) {
-        cartIconButton.addEventListener('click', () => {
-            if (document.getElementById('home-content')) {
-                const contentSections = document.querySelectorAll('.content-section');
-                const loginSection = document.getElementById('login-content');
-                contentSections.forEach(section => section.classList.remove('active'));
-                if (loginSection) {
-                    loginSection.classList.add('active');
-                }
-            } else {
-                window.location.href = 'index.html?section=login';
-            }
-        });
-    }
-
-    // Função para navegar para os detalhes do produto (usada em várias páginas)
-    window.verDetalhes = function(idProduto) {
-        window.location.href = `produtos.html?id=${idProduto}`;
-    }
-
-    // ===================================================================
-    // --- LÓGICA ESPECÍFICA DE CADA PÁGINA ---
-    // ===================================================================
-
-    // --- LÓGICA DA PÁGINA INICIAL (index.html) ---
     if (document.getElementById('home-content')) {
         console.log("Lógica da PÁGINA INICIAL sendo executada.");
 
+        // Função para mostrar a seção correta (Sobre, Login) e esconder as outras
         function showSection(targetId) {
             const contentSections = document.querySelectorAll('.content-section');
             contentSections.forEach(section => section.classList.remove('active'));
+            
             const targetSection = document.getElementById(targetId);
             if (targetSection) {
                 targetSection.classList.add('active');
             }
+
+            // Atualiza a classe 'active' nos links de navegação
+            const navLinks = document.querySelectorAll('.main-nav .nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.target === targetId) {
+                    link.classList.add('active');
+                }
+            });
+             // Garante que o link "Home" fique desmarcado se outra aba for clicada
+            if (targetId !== 'home-content' && targetId !== 'logged-in-content') {
+                 document.getElementById('home-nav-link').querySelector('.nav-link').classList.remove('active');
+            }
         }
 
+        // Verifica se a URL tem um parâmetro para abrir uma seção específica (ex: vindo de um link do footer)
         const urlParams = new URLSearchParams(window.location.search);
         const sectionParam = urlParams.get('section');
 
@@ -51,26 +76,34 @@ document.addEventListener('DOMContentLoaded', function() {
             showSection('login-content');
         } else if (sectionParam === 'about') {
             showSection('about-content');
-        } else {
-            showSection('home-content'); // Comportamento padrão
         }
+        // O estado padrão (home vs logged-in) é controlado pelo auth.js
 
-        const navLinks = document.querySelectorAll('.main-nav .nav-link');
+        // Adiciona o evento de clique nos links que trocam de seção (Sobre, Login)
+        const navLinks = document.querySelectorAll('.main-nav span.nav-link[data-target]');
         navLinks.forEach(link => {
-            if (link.tagName === 'SPAN') {
-                link.addEventListener('click', function(e) { 
-                    e.preventDefault(); 
-                    showSection(this.dataset.target); 
-                });
-            }
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.dataset.target;
+                showSection(targetId);
+            });
         });
+
+        // Chama a função para carregar os produtos na grade de usuários logados
+        loadMainProducts();
     }
     
-    // --- LÓGICA DA PÁGINA DE CADASTRO (cadastro.html) ---
-    const registrationForm = document.getElementById('registration-form');
-    if (registrationForm) {
-        console.log("Lógica da PÁGINA DE CADASTRO (CEP Helper) sendo executada.");
+    // ===================================================================
+    // --- FUNÇÕES GLOBAIS E LÓGICAS PARA OUTRAS PÁGINAS ---
+    // ===================================================================
 
+    // Função global para navegar para os detalhes do produto
+    window.verDetalhes = function(idProduto) {
+        window.location.href = `produtos.html?id=${idProduto}`;
+    }
+
+    // --- LÓGICA DA PÁGINA DE CADASTRO (cadastro.html) ---
+    if (document.getElementById('registration-form')) {
         const cepInput = document.getElementById('cep');
         if (cepInput) {
             cepInput.addEventListener('blur', function() {
@@ -94,10 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- LÓGICA DA PÁGINA DE RESULTADOS (resultados.html) ---
     if (document.getElementById('resultados-grid')) {
-        console.log("Lógica da PÁGINA DE RESULTADOS (com Supabase) sendo executada.");
-
         async function buscarProdutos() {
-            if (!supabase) return;
             const resultsGrid = document.getElementById('resultados-grid');
             const resultsTitle = document.getElementById('search-results-title');
             const urlParams = new URLSearchParams(window.location.search);
@@ -107,13 +137,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultsTitle.textContent = "Faça uma busca para ver os resultados.";
                 return;
             }
-            
             resultsTitle.textContent = `Buscando por: "${searchTerm}"...`;
             
-            const { data: resultados, error } = await supabase
-                .from('produtos')
-                .select('*')
-                .ilike('nome', `%${searchTerm}%`);
+            const { data: resultados, error } = await supabase.from('produtos').select('*').ilike('nome', `%${searchTerm}%`);
 
             if (error) {
                 resultsTitle.textContent = 'Erro ao realizar a busca.';
@@ -135,29 +161,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultsGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center;">Nenhum produto encontrado.</p>';
             }
         }
-        setTimeout(buscarProdutos, 100);
+        buscarProdutos();
     }
-
-    // --- LÓGICA DA PÁGINA DE DETALHES DO PRODUTO (produto.html) ---
+    
+    // --- LÓGICA DA PÁGINA DE DETALHES DO PRODUTO (produtos.html) ---
     if (document.getElementById('detalhe-produto-container')) {
-        console.log("Lógica da PÁGINA DE PRODUTO (com Supabase) sendo executada.");
-
         async function carregarDetalhesDoProduto() {
-            if (!supabase) return;
-
             const urlParams = new URLSearchParams(window.location.search);
             const produtoId = urlParams.get('id');
 
             if (!produtoId) {
-                document.getElementById('detalhe-produto-container').innerHTML = '<h1>Erro!</h1><p>Nenhum ID de produto foi especificado na URL.</p>';
+                document.getElementById('detalhe-produto-container').innerHTML = '<h1>Erro!</h1><p>Nenhum ID de produto foi especificado.</p>';
                 return;
             }
 
-            const { data: produto, error } = await supabase
-                .from('produtos')
-                .select('*')
-                .eq('id_produtos', produtoId)
-                .single();
+            const { data: produto, error } = await supabase.from('produtos').select('*').eq('id_produtos', produtoId).single();
 
             if (error || !produto) {
                 console.error('Erro ao buscar produto:', error);
@@ -171,50 +189,14 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('produto-nome').textContent = produto.nome;
             document.getElementById('produto-preco').textContent = `R$ ${produto.preco}`;
             document.getElementById('produto-descricao').textContent = produto.descricao;
-
-            const linkPersonalizar = document.getElementById('btn-personalizar');
-            if (linkPersonalizar) {
-                linkPersonalizar.href = `metodos-personalizacao.html?id=${produto.id_produtos}`;
-            }
+            document.getElementById('btn-personalizar').href = `metodos-personalizacao.html?id=${produto.id_produtos}`;
         }
-        setTimeout(carregarDetalhesDoProduto, 100);
+        carregarDetalhesDoProduto();
     }
-
-    // --- LÓGICA DA PÁGINA metodos-personalizacao.html ---
-    if (document.querySelector('.metodos-container')) {
-        console.log("Lógica da PÁGINA DE MÉTODOS DE PERSONALIZAÇÃO (com Supabase) sendo executada.");
-
-        async function carregarInfoPersonalizacao() {
-            if (!supabase) return;
-            const urlParams = new URLSearchParams(window.location.search);
-            const produtoId = urlParams.get('id');
-            const tituloEl = document.getElementById('titulo-personalizacao');
-            
-            if (produtoId) {
-                const { data: produto, error } = await supabase
-                    .from('produtos')
-                    .select('nome')
-                    .eq('id_produtos', produtoId)
-                    .single();
-                
-                if (produto && tituloEl) {
-                    tituloEl.textContent = `Personalize sua: ${produto.nome}`;
-                }
-            }
-        }
-        setTimeout(carregarInfoPersonalizacao, 100);
-    }
-
-    // --- LÓGICA DA PÁGINA DE CATEGORIA DE PRODUTOS (produtos-categoria.html) ---
+    
+    // --- LÓGICA DA PÁGINA DE CATEGORIA (produtos-categoria.html) ---
     if (document.getElementById('produtos-grid') && document.getElementById('categoria-titulo')) {
-        console.log("Lógica da PÁGINA DE CATEGORIA DE PRODUTOS (com Supabase) sendo executada.");
-
         async function carregarProdutosDaCategoria() {
-            if (!supabase) {
-                console.error("Supabase client não está disponível.");
-                return;
-            }
-
             const urlParams = new URLSearchParams(window.location.search);
             const categoria = urlParams.get('categoria');
             const titulo = document.getElementById('categoria-titulo');
@@ -224,13 +206,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 titulo.textContent = 'Nenhuma categoria selecionada';
                 return;
             }
-
             titulo.textContent = `Carregando produtos de ${categoria}...`;
 
-            const { data: produtos, error } = await supabase
-                .from('produtos')
-                .select('*')
-                .eq('categoria', categoria);
+            const { data: produtos, error } = await supabase.from('produtos').select('*').eq('categoria', categoria);
             
             if (error) {
                 titulo.textContent = 'Erro ao carregar produtos';
@@ -253,11 +231,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 grid.innerHTML = '<p>Nenhum produto encontrado para esta categoria.</p>';
             }
         }
-        
-        setTimeout(carregarProdutosDaCategoria, 100);
+        carregarProdutosDaCategoria();
     }
 
-    // --- ATUALIZAÇÃO DO CONTADOR DO CARRINHO ---
+    // --- LÓGICA DA PÁGINA DE PERSONALIZAÇÃO (metodos-personalizacao.html) ---
+    if (document.querySelector('.metodos-container')) {
+        async function carregarInfoPersonalizacao() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const produtoId = urlParams.get('id');
+            const tituloEl = document.getElementById('titulo-personalizacao');
+            
+            if (produtoId) {
+                const { data: produto, error } = await supabase.from('produtos').select('nome').eq('id_produtos', produtoId).single();
+                if (produto && tituloEl) {
+                    tituloEl.textContent = `Personalize sua: ${produto.nome}`;
+                }
+            }
+        }
+        carregarInfoPersonalizacao();
+    }
+
+    // --- ATUALIZAÇÃO DO CONTADOR DO CARRINHO (executa em todas as páginas) ---
     const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
     const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
     const contador = document.getElementById('cart-count');

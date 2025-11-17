@@ -11,11 +11,6 @@
 
 <body>
 
-<script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-        window.myCreateSupabaseClient = createClient;
-    </script>
-
     <header>
         <div class="logo"><img src="imagens/logomarca V3.png" alt="Logo Personalized Gift Shop"></div>
         <div class="site-name">Personalized Gift Shop</div>
@@ -24,23 +19,25 @@
                 <input type="search" id="search-input" name="q" placeholder="Buscar..." required>
                 <button type="submit" aria-label="Buscar">🔍</button>
             </form>
-<a href="carrinho.html" class="cart-icon" aria-label="Carrinho de Compras">
-    🛒<span id="cart-count" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; vertical-align: top; display: none;">0</span>
-</a>
-            </div>
+            <a href="carrinho.html" class="cart-icon" aria-label="Carrinho de Compras">
+                🛒<span id="cart-count" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; vertical-align: top; display: none;">0</span>
+            </a>
         </div>
     </header>
 
     <nav class="main-nav">
         <ul>
-            <li><span data-target="home-content" class="nav-link active">Home</span></li>
-            <li><span data-target="about-content" class="nav-link">Sobre</span></li>
-            <li><span data-target="login-content" class="nav-link">Login</span></li>
+            <!-- O link de Login agora tem um ID para ser controlado pelo JS -->
+            <li id="home-nav-link"><span data-target="home-content" class="nav-link active">Home</span></li>
+            <li id="about-nav-link"><span data-target="about-content" class="nav-link">Sobre</span></li>
+            <li id="login-nav-link"><span data-target="login-content" class="nav-link">Login</span></li>
+            <!-- O link de Sair começa escondido e será mostrado pelo JS -->
+            <li id="logout-nav-link" style="display: none;"><span class="nav-link">Sair</span></li>
         </ul>
     </nav>
 
     <main>
-        <!-- Seção Home (Dicas e Inspirações) -->
+        <!-- Seção Home para usuários NÃO LOGADOS -->
         <section id="home-content" class="content-section active">
             <div class="dicas-container">
                 <h2>Inspire-se com Nossas Ideias</h2>
@@ -136,6 +133,16 @@
             </div>
         </section>
 
+        <!-- NOVA SEÇÃO: Conteúdo para usuários LOGADOS -->
+        <section id="logged-in-content" class="content-section">
+            <h2>Nossos Produtos</h2>
+            <p>Seja bem-vindo(a)! Explore nosso catálogo completo abaixo.</p>
+            <div id="product-grid-main" class="produtos-grid-main">
+                <!-- Os produtos do banco de dados serão inseridos aqui pelo script.js -->
+            </div>
+        </section>
+
+
         <!-- Seção Sobre -->
         <section id="about-content" class="content-section">
             <h2>Sobre Nós</h2>
@@ -188,26 +195,24 @@
         <section id="login-content" class="content-section">
             <div class="login-form-container">
                 <h3>Login</h3>
-                
                 <form id="actual-login-form" method="post">
                     <div>
-                        <label for="email">E-mail:</label>
-                        <input type="email" id="email" name="email" required placeholder="seuemail@exemplo.com">
+                        <label for="login-email">E-mail:</label>
+                        <input type="email" id="login-email" name="email" required placeholder="seuemail@exemplo.com">
                     </div>
                     <div>
-                        <label for="senha">Senha:</label>
-                        <input type="password" id="senha" name="senha" required placeholder="********">
+                        <label for="login-senha">Senha:</label>
+                        <input type="password" id="login-senha" name="senha" required placeholder="********">
                     </div>
                     <button type="submit">Entrar</button>
                 </form>
-
                 <div class="login-options" style="margin-top: 15px;">
                     <p>Não tem uma conta? <a href="cadastro.html">Cadastre-se</a>.</p>
                 </div>
             </div>
         </section>
     </main>
-  <footer>
+    <footer>
         <div class="footer-container">
             <div class="footer-column">
                 <h4>Institucional</h4>
@@ -254,10 +259,13 @@
             </div>
         </div>
     </footer>
-    <script src="js/script.js"></script>
+
+   
+
+    <!-- Scripts carregados no final para melhor performance -->
     <script type="module" src="js/supabaseClient.js"></script>
     <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/script.js"></script>
 
 </body>
-
 </html>
