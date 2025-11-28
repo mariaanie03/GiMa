@@ -92,29 +92,20 @@
         </div>
     </footer>
 
-
-    <!-- 1. Carrega a conexão com o Supabase -->
     <script type="module" src="js/supabaseClient.js"></script>
-
-    <!-- 2. Carrega o script principal que busca os detalhes do produto -->
     <script type="module" src="js/script.js"></script>
-
-    <!-- 3. Lógica de adicionar ao carrinho com salvamento no BANCO DE DADOS -->
     <script type="module">
         import { supabase } from './js/supabaseClient.js';
 
         document.addEventListener('DOMContentLoaded', () => {
             const btnAdicionar = document.getElementById('btn-add-carrinho');
             const urlParams = new URLSearchParams(window.location.search);
-            // Certifique-se de que o ID do produto é um número para corresponder ao banco de dados
             const produtoId = parseInt(urlParams.get('id'));
 
             if (btnAdicionar && produtoId) {
                 btnAdicionar.addEventListener('click', async () => {
-                    // Pega a sessão atual do usuário
                     const { data: { session } } = await supabase.auth.getSession();
 
-                    // Se não houver sessão (usuário não logado), redireciona para o login
                     if (!session) {
                         alert('Você precisa fazer login para adicionar produtos ao carrinho.');
                         window.location.href = 'index.html?section=login';
@@ -122,70 +113,68 @@
                     }
 
                     const userId = session.user.id;
-                    // A personalização ainda vem do localStorage, pois é temporária
                     const personalizacao = localStorage.getItem('produtoPersonalizado');
 
                     try {
-                        // 1. Verifica se um item idêntico (mesmo produto, mesmo usuário) já existe no carrinho
+                        // --- CONFIGURAÇÃO FINAL ---
+                        // Tabela: 'carrinhos'
+                        // Colunas: id_carrinho, quantidade, id_profile (em vez de user_id)
+                        
                         const { data: itemExistente, error: selectError } = await supabase
-                            .from('carrinhos')
-                            .select('id, quantity') // Seleciona só o que precisamos
-                            .eq('user_id', userId)
+                            .from('carrinhos') 
+                            .select('id_carrinho, quantidade') 
+                            .eq('id_profile', userId) // <--- ALTERADO PARA id_profile
                             .eq('produto_id', produtoId)
-                            .maybeSingle(); // Retorna um único item ou null, sem erro se não encontrar
+                            .maybeSingle(); 
 
                         if (selectError) throw selectError;
 
                         if (itemExistente) {
-                            // 2a. Se o item já existe, apenas incrementa a quantidade
-                            const novaQuantidade = itemExistente.quantity + 1;
+                            // Atualiza QUANTIDADE
+                            const novaQuantidade = itemExistente.quantidade + 1;
                             const { error: updateError } = await supabase
-                                .from('carrinhos')
-                                .update({ quantity: novaQuantidade })
-                                .eq('id', itemExistente.id); // Atualiza usando a chave primária do item do carrinho
+                                .from('carrinhos') 
+                                .update({ quantidade: novaQuantidade })
+                                .eq('id_carrinho', itemExistente.id_carrinho);
                             
                             if (updateError) throw updateError;
                         } else {
-                            // 2b. Se o item não existe, insere uma nova linha na tabela
+                            // Insere NOVO ITEM
                             const { error: insertError } = await supabase
-                                .from('carrinhos')
+                                .from('carrinhos') 
                                 .insert({
-                                    user_id: userId,
+                                    id_profile: userId, // <--- ALTERADO PARA id_profile
                                     produto_id: produtoId,
-                                    quantity: 1,
-                                    customization: personalizacao // Salva a personalização se houver
+                                    quantidade: 1, 
+                                    customization: personalizacao
                                 });
 
                             if (insertError) throw insertError;
                         }
                         
-                        // Limpa a personalização local do navegador após salvar no banco
                         if (personalizacao) {
                             localStorage.removeItem('produtoPersonalizado');
                         }
 
                         alert(`"${document.getElementById('produto-nome').textContent}" foi adicionado ao carrinho!`);
                         
-                        // Atualiza o contador do header
                         atualizarContadorCarrinhoHeader(userId);
 
                     } catch (error) {
                         console.error('Erro ao adicionar ao carrinho:', error);
-                        alert('Não foi possível adicionar o item ao carrinho. Tente novamente.');
+                        alert('Erro ao adicionar: ' + error.message);
                     }
                 });
             }
 
-            // Função para atualizar o ícone do carrinho no header
             async function atualizarContadorCarrinhoHeader(userId) {
                 const { data: { session } } = await supabase.auth.getSession();
-                if (!session) return; // Não faz nada se não estiver logado
+                if (!session) return; 
 
-                // Conta quantos itens o usuário tem no carrinho no banco
                 const { count, error } = await supabase
-                    .from('carrinhos')
+                    .from('carrinhos') 
                     .select('*', { count: 'exact', head: true })
-                    .eq('user_id', session.user.id);
+                    .eq('id_profile', session.user.id); // <--- ALTERADO PARA id_profile
                 
                 const contadorEl = document.getElementById('cart-count');
                 if (contadorEl) {
@@ -195,7 +184,6 @@
                 }
             }
 
-            // Carrega o contador assim que a página é aberta
             atualizarContadorCarrinhoHeader();
         });
     </script>

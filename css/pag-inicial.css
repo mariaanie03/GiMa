@@ -35,14 +35,14 @@
     cursor: pointer;
 }
 
-/* Área de Conteúdo Principal */
+
 main {
     padding: 20px;
-    min-height: calc(100vh - 250px); /* Ajuste conforme altura do header/footer */
+    min-height: calc(100vh - 250px); 
 }
 
 .content-section {
-    display: none; /* Todas as seções começam escondidas */
+    display: none;
     padding: 0;
     border: 1px solid #eee;
     border-radius: 8px;
@@ -55,26 +55,22 @@ main {
     text-align: justify;}
 
 .content-section.active {
-    display: block; /* A seção ativa é mostrada */
+    display: block; 
 }
 
 
-
-
-
-/* Estilos para Home Content (Mockup 1) */
 #home-content {
-    display: none; /* Será 'flex' quando ativo */
+    display: none; 
     gap: 20px;
     justify-content: space-around;
 }
 #home-content.active {
-    display: flex; /* Mostrar como flex quando ativo */
+    display: flex; 
 }
 
 .home-column {
     flex: 1;
-    min-width: 200px; /* Evita que fiquem muito estreitas */
+    min-width: 200px; 
     padding: 15px;
     background-color: #f9f9f9;
     border-radius: 5px;
@@ -108,43 +104,23 @@ main {
     border-color: #bbb;
 }
 
-/* Estilos para Product Display (Mockup 2) */
+
 #product-display-content {
-    display: none; /* Será 'flex' quando ativo */
-    /* Se você quiser que o product-details-area fique centralizado, pode adicionar: */
-    /* justify-content: center; */ 
-    /* align-items: center; */ /* ou flex-start dependendo do alinhamento vertical desejado */
+    display: none; 
+
 }
 #product-display-content.active {
-    display: flex; /* Mantido como flex para consistência e futuras adições, se houver */
+    display: flex; 
 }
 
-/* REMOVIDO O ESTILO .product-image-placeholder */
-/*
-.product-image-placeholder {
-    flex: 1;
-    background-color: #f0f0f0; 
-    padding: 20px;
-    border-radius: 8px;
-    min-height: 300px; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.product-image-placeholder img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    border: 1px solid #ddd;
-}
-*/
+
 
 .product-details-area {
-    flex: 1; /* Agora pode ser flex: 1 ou width: 100% se for o único item */
-    width: 100%; /* Para garantir que ocupe toda a largura se for o único filho */
-    border: 1px solid #e0e0e0; /* Borda como no mockup */
+    flex: 1; 
+    width: 100%; 
+    border: 1px solid #e0e0e0; 
     padding: 20px;
-    min-height: 300px; /* Altura mínima */
+    min-height: 300px; 
 }
 .product-details-area h2 {
     margin-bottom: 15px;
@@ -155,11 +131,11 @@ main {
 }
 
 
-/* Estilos para Login Content (Mockup 3) */
+
 #login-content {
-    display: none; /* Será 'flex' quando ativo */
+    display: none; 
     justify-content: center;
-    align-items: flex-start; /* Alinha itens ao topo */
+    align-items: flex-start;
     gap: 20px;
 }
 #login-content.active {
@@ -171,7 +147,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    flex-basis: 200px; /* Largura base */
+    flex-basis: 200px; 
 }
 .login-options button {
     padding: 12px;
@@ -189,7 +165,7 @@ main {
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    max-width: 400px; /* Limita a largura do form */
+    max-width: 400px; 
   
 }
 .login-form-container h3 {
@@ -211,14 +187,14 @@ main {
 }
 #actual-login-form button {
     display: block;
-    width: auto; /* Ajusta ao conteúdo */
+    width: auto;
     padding: 10px 25px;
     background-color: #5D9CEC;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin: 20px auto 0; /* Centraliza o botão */
+    margin: 20px auto 0;
 }
 #actual-login-form button:hover {
     background-color: #4A80D3;
@@ -231,23 +207,22 @@ main {
 }
 
 
-/* Rodapé */
 footer {
     text-align: center;
     padding: 20px;
-    background: linear-gradient(to top, #4A90E2, #357ABD); /* Azul do mockup */
+    background: linear-gradient(to top, #4A90E2, #357ABD); 
     color: white;
     margin-top: 30px;
 }
 
-/* Responsividade básica */
+
 @media (max-width: 900px) {
     #home-content.active,
-    #product-display-content.active, /* Ajustado para aplicar também à product-display */
+    #product-display-content.active, 
     #login-content.active {
         flex-direction: column;
     }
-    .product-details-area { /* Garante que ocupe a largura toda em telas menores */
+    .product-details-area { 
         width: 100%;
     }
     .main-nav ul {
@@ -274,11 +249,10 @@ footer {
         gap: 10px;
     }
     .site-name {
-        order: -1; /* Coloca o nome do site primeiro na coluna */
+        order: -1;
     }
 }
 
-  /* Estilos para a seção Dicas e Inspirações (Home) */
         .dicas-container {
             padding: 20px;
         }
@@ -360,68 +334,65 @@ footer {
         }
 
 
-
-      
-           /* Grid principal que segura os produtos */
         .produtos-grid-main {
             display: grid;
-            /* Cria colunas automáticas que se ajustam (mínimo 250px) */
+           
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 30px; /* Espaço entre os cards */
+            gap: 30px; 
             padding: 20px;
             max-width: 1200px;
-            margin: 0 auto; /* Centraliza a grade na tela */
+            margin: 0 auto; 
         }
 
-        /* O cartão individual de cada produto */
+        
         .produto-card-main {
             background-color: #fff;
             border: 1px solid #e1e1e1;
-            border-radius: 12px; /* Bordas arredondadas */
+            border-radius: 12px; 
             padding: 20px;
-            text-align: center; /* Centraliza todo o texto */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Sombra suave */
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animação suave */
+            text-align: center; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Garante que o botão fique no final */
-            height: 100%; /* Faz todos os cards terem a mesma altura */
+            justify-content: space-between; 
+            height: 100%; 
         }
 
-        /* Efeito ao passar o mouse */
+     
         .produto-card-main:hover {
-            transform: translateY(-5px); /* Levanta levemente */
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* Sombra mais forte */
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
 
-        /* Imagem do produto */
+        
         .produto-card-main img {
             width: 100%;
-            height: 220px; /* Altura fixa para alinhar */
-            object-fit: contain; /* Garante que a imagem apareça inteira */
+            height: 220px; 
+            object-fit: contain; 
             margin-bottom: 15px;
             padding: 10px;
         }
 
-        /* Título do produto */
+       
         .produto-card-main h3 {
             font-size: 1.1rem;
             color: #333;
             margin: 10px 0;
             font-weight: 600;
-            text-transform: capitalize; /* Coloca a primeira letra maiúscula */
+            text-transform: capitalize;
             line-height: 1.4;
         }
 
-        /* Preço */
+   
         .produto-card-main .preco {
             font-weight: bold;
             font-size: 1.4em;
-            color: #27ae60; /* Verde para dinheiro */
+            color: #27ae60; 
             margin: 5px 0 20px 0;
         }
 
-        /* Botão */
+   
         .btn-ver-detalhes {
             display: block;
             width: 100%;
@@ -437,5 +408,60 @@ footer {
         }
 
         .btn-ver-detalhes:hover {
-            background-color: #555; /* Cor mais clara ao passar o mouse */
+            background-color: #555; 
         }
+
+
+
+#about-content {
+    max-width: 1000px; 
+    margin: 0 auto; 
+    padding: 40px; 
+    background-color: #fff;
+    border-radius: 8px; 
+}
+
+
+#about-content h2 {
+    color: #4A90E2; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.8em;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0; 
+}
+
+
+#about-content h2:first-of-type {
+    margin-top: 0;
+    text-align: center;
+    font-size: 2.2em;
+    border-bottom: none;
+    color: #357ABD; 
+}
+
+
+#about-content p {
+    color: #555; 
+    font-size: 1.05em;
+    line-height: 1.8; 
+    margin-bottom: 20px;
+    text-align: justify; 
+}
+
+
+#about-content strong {
+    color: #357ABD;
+    font-weight: 700;
+}
+
+
+@media (max-width: 600px) {
+    #about-content {
+        padding: 20px;
+    }
+    #about-content h2 {
+        font-size: 1.5em;
+    }
+}
