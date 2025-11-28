@@ -1,5 +1,5 @@
 @import url('_comum.css');
-        /* Estilos específicos para a página do carrinho */
+        
         main {
             padding: 20px 5%;
             max-width: 1200px;
@@ -13,16 +13,16 @@
         }
 
         .carrinho-produtos {
-            flex: 2; /* Ocupa 2/3 do espaço */
+            flex: 2; 
             min-width: 400px;
         }
 
         .carrinho-resumo {
-            flex: 1; /* Ocupa 1/3 do espaço */
+            flex: 1; 
             background-color: #f9f9f9;
             padding: 20px;
             border-radius: 8px;
-            height: fit-content; /* Ajusta a altura ao conteúdo */
+            height: fit-content; 
         }
 
         .carrinho-resumo h2 {
@@ -99,7 +99,7 @@
             font-size: 1.2em;
         }
 
-        /* ESTADO DE CARRINHO VAZIO */
+    
         #carrinho-vazio {
             text-align: center;
             padding: 50px;
@@ -119,24 +119,23 @@
             background-color: #0056b3;
         }
 
-        /* Garante que o container principal use Flexbox para alinhar os filhos */
+      
 .carrinho-container {
     display: flex;
-    flex-wrap: wrap; /* Permite que os itens quebrem para a linha de baixo em telas pequenas */
-    gap: 20px; /* Espaçamento entre a lista de produtos e o resumo */
+    flex-wrap: wrap; 
+    gap: 20px; 
     padding: 20px;
-    align-items: flex-start; /* Alinha os itens no topo */
+    align-items: flex-start; 
 }
 
-/* Define que a lista de produtos deve ocupar o espaço disponível */
 .carrinho-produtos {
-    flex: 2; /* Ocupa 2/3 do espaço */
-    min-width: 300px; /* Largura mínima antes de quebrar a linha */
+    flex: 2; 
+    min-width: 300px; 
 }
 
-/* Define um tamanho fixo para o resumo do pedido */
+
 .carrinho-resumo {
-    flex: 1; /* Ocupa 1/3 do espaço */
+    flex: 1; 
     background-color: #f9f9f9;
     padding: 20px;
     border: 1px solid #ddd;
@@ -144,12 +143,12 @@
     min-width: 280px;
 }
 
-/* Estilizando os botões e links dentro do resumo para ficarem mais bonitos */
+
 .carrinho-resumo .btn-checkout {
-    display: block; /* Faz o botão ocupar a largura toda */
+    display: block; 
     width: 100%;
     padding: 12px;
-    background-color: #28a745; /* Verde */
+    background-color: #28a745;
     color: white;
     text-align: center;
     text-decoration: none;

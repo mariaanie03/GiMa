@@ -1,15 +1,15 @@
 @import url('_comum.css');
-        body { font-family: sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1, h2 { text-align: center; color: #007bff; }
-        form { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-        input, select, button { padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc; }
-        button { background-color: #007bff; color: white; cursor: pointer; border: none; }
-        button:hover { background-color: #007bff; }
-        #admin-panel-section { display: none; } /* O painel começa escondido */
-        .product-list-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
-        .product-list-item img { width: 50px; height: 50px; object-fit: cover; margin-right: 15px; border-radius: 4px; }
-        .product-list-item .info { flex-grow: 1; }
-        .delete-btn { background-color: #e74c3c; }
-        .logout-btn { background-color: #7f8c8d; position: absolute; top: 20px; right: 20px; }
-        #loading { text-align: center; display: none; }
+body { font-family: sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; }
+.container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+h1, h2 { text-align: center; color: #007bff; }
+form { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+input, select, button { padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc; }
+button { background-color: #007bff; color: white; cursor: pointer; border: none; }
+button:hover { background-color: #007bff; }
+#admin-panel-section { display: none; } 
+.product-list-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+.product-list-item img { width: 50px; height: 50px; object-fit: cover; margin-right: 15px; border-radius: 4px; }
+.product-list-item .info { flex-grow: 1; }
+.delete-btn { background-color: #e74c3c; }
+.logout-btn { background-color: #7f8c8d; position: absolute; top: 20px; right: 20px; }
+#loading { text-align: center; display: none; }

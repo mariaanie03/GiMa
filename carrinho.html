@@ -28,14 +28,14 @@
     </nav>
 
     <main>
-        <!-- CARRINHO LOGADO -->
+    
         <div id="carrinho-logado" style="display: none;">
             <h1>Meu Carrinho de Compras</h1>
             
-            <!-- Estado: Carregando ou Cheio -->
+      
             <div id="carrinho-cheio" class="carrinho-container" style="display: none;">
                 <div id="lista-produtos-carrinho" class="carrinho-produtos">
-                    <!-- Itens entram aqui via JS -->
+                
                 </div>
                 <div id="resumo-carrinho" class="carrinho-resumo">
                     <h2>Resumo do Pedido</h2>
@@ -46,14 +46,14 @@
                 </div>
             </div>
 
-            <!-- Estado: Vazio -->
+        
             <div id="carrinho-vazio" style="display: none; text-align: center; padding: 50px;">
                 <h2>Seu carrinho está vazio.</h2>
                 <a href="index.html" class="btn-continuar-comprando">Continuar Comprando</a>
             </div>
         </div>
 
-        <!-- CARRINHO DESLOGADO -->
+ 
         <div id="carrinho-deslogado" style="display: none; text-align: center; padding: 50px;">
             <h2>Você precisa estar logado para ver seu carrinho.</h2>
             <a href="index.html?section=login" class="btn-continuar-comprando">Ir para o Login</a>
@@ -133,8 +133,6 @@
 
             const listaProdutosContainer = document.getElementById('lista-produtos-carrinho');
             
-            // BUSCA NO BANCO
-            // Aqui ele tenta pegar os dados do carrinho E os dados do produto relacionado
             const { data: items, error } = await supabase
                 .from('carrinhos')
                 .select(`
@@ -148,12 +146,11 @@
                         imagem_url
                     )
                 `)
-                .eq('id_profile', userId) // Usa id_profile para filtrar
-                .order('quantidade', { ascending: false }); // Ordenação simples
+                .eq('id_profile', userId) 
+                .order('quantidade', { ascending: false });
 
             if (error) {
                 console.error("Erro ao buscar carrinho:", error);
-                // Se der erro de relação, avisa no console
                 if(error.message.includes('relation') || error.message.includes('foreign key')) {
                      alert("Erro de configuração no Banco de Dados: Falta a chave estrangeira entre Carrinhos e Produtos.");
                 }
@@ -161,13 +158,11 @@
                 return;
             }
 
-            // SE NÃO TIVER ITENS
             if (!items || items.length === 0) {
                 document.getElementById('carrinho-cheio').style.display = 'none';
                 document.getElementById('carrinho-vazio').style.display = 'block';
                 atualizarContadorHeader([]);
             } else {
-                // SE TIVER ITENS
                 document.getElementById('carrinho-cheio').style.display = 'flex';
                 document.getElementById('carrinho-vazio').style.display = 'none';
                 
@@ -176,7 +171,6 @@
                 items.forEach(item => {
                     const produto = item.produtos;
                     
-                    // Se o produto veio nulo (acontece se deletou o produto ou falha na relação), pula
                     if (!produto) {
                         console.warn("Item do carrinho sem produto correspondente:", item);
                         return; 
@@ -209,7 +203,7 @@
 
         function atualizarResumo(items = []) {
             const subtotal = items.reduce((acc, item) => {
-                // Só soma se o produto existir
+               
                 return item.produtos ? acc + (item.produtos.preco * item.quantidade) : acc;
             }, 0);
             
@@ -230,15 +224,14 @@
             }
         }
         
-        // EVENTOS DE CLIQUE (Remover, Aumentar, Diminuir)
         document.getElementById('lista-produtos-carrinho').addEventListener('click', async (e) => {
             const cartItemDiv = e.target.closest('.produto-carrinho');
             if (!cartItemDiv) return;
 
-            const cartItemId = cartItemDiv.dataset.cartId; // ID é UUID (texto)
+            const cartItemId = cartItemDiv.dataset.cartId; 
             const currentQuantity = parseInt(cartItemDiv.dataset.quantity);
             
-            // UI Feedback imediato
+         
             cartItemDiv.style.opacity = '0.5';
             cartItemDiv.style.pointerEvents = 'none';
 
@@ -261,7 +254,7 @@
                 alert("Erro ao atualizar item.");
             }
 
-            // Recarrega a tela
+        
             renderizarCarrinho();
         });
     </script>

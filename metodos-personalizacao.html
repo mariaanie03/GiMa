@@ -103,28 +103,27 @@
     </main>
 
     <footer>
-        <!-- Seu footer completo aqui -->
+    
     </footer>
     
-    <!-- Substitua todo o <script> existente por este no arquivo metodos-personalizacao.html -->
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- SETUP E REFERÊNCIAS ---
+
     const canvas = document.getElementById('canvas-personalizacao');
     const ctx = canvas.getContext('2d');
     const abrirEditorBtn = document.getElementById('abrir-editor-desenho');
     const editorContainer = document.getElementById('editor-desenho-container');
     const uploadInput = document.getElementById('upload-arte');
     const galeriaArtes = document.getElementById('galeria-artes');
-    const btnConfirmar = document.getElementById('btn-confirmar-personalizacao'); // <-- Referência adicionada
+    const btnConfirmar = document.getElementById('btn-confirmar-personalizacao'); 
 
-    // Ferramentas de Desenho
     const pencilTool = document.getElementById('pencil-tool');
     const eraserTool = document.getElementById('eraser-tool');
     const colorPalette = document.querySelector('.color-palette');
     const limparCanvasBtn = document.getElementById('limpar-canvas');
 
-    // Ferramentas de Texto
+
     const adicionarTextoBtn = document.getElementById('btn-adicionar-texto');
     const textoAdicionalInput = document.getElementById('texto-adicional');
     const textToolsContainer = document.getElementById('text-tools');
@@ -132,13 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const fontSizeInput = document.getElementById('font-size');
     const fontColorInput = document.getElementById('font-color');
 
-    // Histórico
+
     const undoBtn = document.getElementById('undo-btn');
     const redoBtn = document.getElementById('redo-btn');
     let history = [];
     let historyStep = -1;
 
-    // --- ESTADO DA APLICAÇÃO ---
+ 
     let currentCanvasState = new Image();
     let textObjects = [];
     let activeTextObject = null;
@@ -147,11 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDragging = false;
     let dragStartX, dragStartY;
 
-    // Pega o ID do produto da URL para usar depois
     const urlParams = new URLSearchParams(window.location.search);
     const produtoIdString = urlParams.get('id');
 
-    // --- FUNÇÕES DE HISTÓRICO (UNDO/REDO) ---
+
     const saveState = () => {
         if (historyStep < history.length - 1) {
             history = history.slice(0, historyStep + 1);
@@ -187,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     undoBtn.addEventListener('click', () => { if (historyStep > 0) { historyStep--; restoreState(); }});
     redoBtn.addEventListener('click', () => { if (historyStep < history.length - 1) { historyStep++; restoreState(); }});
 
-    // --- RENDERIZAÇÃO PRINCIPAL ---
+
     const redrawCanvas = (showSelection = true) => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (currentCanvasState.src) {
@@ -213,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- LÓGICA DAS FERRAMENTAS ---
     const setActiveTool = (tool) => {
         activeTool = tool;
         pencilTool.classList.toggle('active', tool === 'pencil');
@@ -223,17 +220,14 @@ document.addEventListener('DOMContentLoaded', () => {
     pencilTool.addEventListener('click', () => setActiveTool('pencil'));
     eraserTool.addEventListener('click', () => setActiveTool('eraser'));
 
-    // --- CORREÇÃO 1: FUNCIONALIDADE DA PALETA DE CORES ---
     colorPalette.addEventListener('click', (e) => {
         if (e.target.classList.contains('color-swatch')) {
-            // Remove a classe 'active' da cor atualmente ativa
             colorPalette.querySelector('.active').classList.remove('active');
-            // Adiciona a classe 'active' à cor que foi clicada
             e.target.classList.add('active');
         }
     });
     
-    // --- LÓGICA DE DESENHO (LÁPIS/BORRACHA) ---
+
     const startDrawing = (e) => {
         isDrawing = true;
         redrawCanvas(false);
@@ -263,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
         saveState();
     };
 
-    // --- LÓGICA DE TEXTO ---
     adicionarTextoBtn.addEventListener('click', () => {
         const text = textoAdicionalInput.value;
         if (!text) return;
@@ -303,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fontSizeInput.addEventListener('change', saveState);
     fontColorInput.addEventListener('input', () => { updateActiveText(); saveState(); });
 
-    // --- EVENTOS DO CANVAS (MOUSE) ---
+
     canvas.addEventListener('mousedown', (e) => {
         if (activeTool === 'pencil' || activeTool === 'eraser') {
             startDrawing(e);
@@ -350,39 +343,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- AÇÕES GERAIS ---
+ 
     abrirEditorBtn.addEventListener('click', () => {
         editorContainer.style.display = 'flex';
         abrirEditorBtn.style.display = 'none';
     });
 
-    // --- CORREÇÃO 3: FUNÇÃO `loadImage` CORRIGIDA PARA NÃO ESTICAR A IMAGEM ---
+ 
     const loadImage = (src) => {
         const img = new Image();
         img.crossOrigin = "Anonymous";
         img.onload = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Calcula a proporção para manter o aspecto da imagem
+            
             const canvasAspectRatio = canvas.width / canvas.height;
             const imgAspectRatio = img.width / img.height;
             let renderWidth, renderHeight, xStart, yStart;
 
             if (imgAspectRatio > canvasAspectRatio) {
-                // Imagem mais "larga" que o canvas
+             
                 renderWidth = canvas.width;
                 renderHeight = canvas.width / imgAspectRatio;
                 xStart = 0;
                 yStart = (canvas.height - renderHeight) / 2;
             } else {
-                // Imagem mais "alta" que o canvas ou com a mesma proporção
+              
                 renderHeight = canvas.height;
                 renderWidth = canvas.height * imgAspectRatio;
                 yStart = 0;
                 xStart = (canvas.width - renderWidth) / 2;
             }
             
-            // Desenha a imagem centralizada e com a proporção correta
+           
             ctx.drawImage(img, xStart, yStart, renderWidth, renderHeight);
 
             currentCanvasState.src = canvas.toDataURL();
@@ -405,31 +398,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     limparCanvasBtn.addEventListener('click', () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        currentCanvasState.src = canvas.toDataURL(); // Salva o estado em branco
+        currentCanvasState.src = canvas.toDataURL(); 
         textObjects = [];
         setActiveText(null);
         saveState();
     });
 
-    // --- CORREÇÃO 2: FUNCIONALIDADE DO BOTÃO "CONFIRMAR PERSONALIZAÇÃO" ---
+ 
     if (btnConfirmar) {
         btnConfirmar.addEventListener('click', () => {
-            // Salva a imagem final do canvas no localStorage
+           
             const personalizacaoFinal = canvas.toDataURL('image/png');
             localStorage.setItem('produtoPersonalizado', personalizacaoFinal);
 
             alert('Personalização salva! Você será redirecionado para a página do produto para adicioná-lo ao carrinho.');
 
-            // Redireciona de volta para a página do produto, se o ID existir
+         
             if (produtoIdString) {
                 window.location.href = `produtos.html?id=${produtoIdString}`;
             } else {
-                window.location.href = 'index.html'; // Fallback
+                window.location.href = 'index.html';
             }
         });
     }
     
-    // --- INICIALIZAÇÃO ---
+   
     saveState();
 });
 </script>

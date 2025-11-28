@@ -2,24 +2,18 @@ import { supabase } from './supabaseClient.js';
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ===================================================================
-    // --- LÓGICA ESPECÍFICA DA PÁGINA INICIAL (index.html) ---
-    // ===================================================================
+    
     if (document.getElementById('home-content')) {
         console.log("Lógica da PÁGINA INICIAL sendo executada.");
 
-        // Função para mostrar a seção correta (Home, Sobre, Login) sem recarregar a página
         function showSection(targetId) {
-            // Esconde todas as seções
             document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
             
-            // Mostra a seção alvo
             const targetSection = document.getElementById(targetId);
             if (targetSection) {
                 targetSection.classList.add('active');
             }
 
-            // Atualiza qual link de navegação está ativo
             document.querySelectorAll('.main-nav .nav-link').forEach(link => {
                 link.classList.remove('active');
                 if (link.dataset.target === targetId) {
@@ -27,21 +21,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // Garante que o link "Home" fique desmarcado se outra aba for clicada
             if (targetId !== 'home-content') {
                  document.querySelector('#home-nav-link .nav-link').classList.remove('active');
             }
         }
 
-        // Permite abrir uma seção específica via URL (ex: index.html?section=about)
         const urlParams = new URLSearchParams(window.location.search);
         const sectionParam = urlParams.get('section');
         if (sectionParam) {
-            // Constrói o ID do alvo (ex: 'about' -> 'about-content')
             showSection(sectionParam + '-content');
         }
 
-        // Adiciona o evento de clique nos links de navegação da página inicial
+   
         document.querySelectorAll('.main-nav span.nav-link[data-target]').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -50,16 +41,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ===================================================================
-    // --- FUNÇÕES GLOBAIS E LÓGICAS PARA OUTRAS PÁGINAS ---
-    // ===================================================================
-
-    // Função global para navegar para a página de detalhes do produto
+ 
     window.verDetalhes = function(idProduto) {
         window.location.href = `produtos.html?id=${idProduto}`;
     }
 
-    // --- LÓGICA DA PÁGINA DE CADASTRO (cadastro.html) ---
     if (document.getElementById('registration-form')) {
         const cepInput = document.getElementById('cep');
         if (cepInput) {
@@ -82,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- LÓGICA DA PÁGINA DE RESULTADOS (resultados.html) ---
     if (document.getElementById('resultados-grid')) {
         async function buscarProdutos() {
             const resultsGrid = document.getElementById('resultados-grid');
@@ -121,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
         buscarProdutos();
     }
     
-    // --- LÓGICA DA PÁGINA DE DETALHES DO PRODUTO (produtos.html) ---
     if (document.getElementById('detalhe-produto-container')) {
         async function carregarDetalhesDoProduto() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -151,7 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
         carregarDetalhesDoProduto();
     }
     
-    // --- LÓGICA DA PÁGINA DE CATEGORIA (produtos-categoria.html) ---
     if (document.getElementById('produtos-grid') && document.getElementById('categoria-titulo')) {
         async function carregarProdutosDaCategoria() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -191,7 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
         carregarProdutosDaCategoria();
     }
 
-    // --- LÓGICA DA PÁGINA DE PERSONALIZAÇÃO (metodos-personalizacao.html) ---
     if (document.querySelector('.metodos-container')) {
         async function carregarInfoPersonalizacao() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -208,7 +190,6 @@ document.addEventListener('DOMContentLoaded', function() {
         carregarInfoPersonalizacao();
     }
 
-    // --- ATUALIZAÇÃO DO CONTADOR DO CARRINHO (executa em todas as páginas) ---
     const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
     const totalItens = carrinho.reduce((acc, item) => acc + item.quantity, 0);
     const contador = document.getElementById('cart-count');

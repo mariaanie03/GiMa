@@ -1,56 +1,45 @@
-// js/auth.js
 
-// Importa a instância do Supabase que foi criada no supabaseClient.js
 import { supabase } from './supabaseClient.js';
 
 console.log('auth.js carregado');
 
-// ===================================================================
-// --- CONTROLE DE UI BASEADO NA AUTENTICAÇÃO ---
-// ===================================================================
 
-// Função para atualizar a interface (apenas os botões de login/logout)
 function updateUserUI(user) {
-    // Só executa a lógica se estiver na página inicial
+   
     if (document.getElementById('home-content')) {
         const loginLink = document.getElementById('login-nav-link');
         const logoutLink = document.getElementById('logout-nav-link');
 
         if (user) {
-            // --- USUÁRIO ESTÁ LOGADO ---
+          
             loginLink.style.display = 'none';
             logoutLink.style.display = 'list-item';
 
-            // Se o usuário fez login a partir da seção de login,
-            // o esconde e volta para a seção principal 'home-content'.
             const loginContent = document.getElementById('login-content');
             if (loginContent && loginContent.classList.contains('active')) {
                 loginContent.classList.remove('active');
                 document.getElementById('home-content').classList.add('active');
-                // Reativa o link "Home" na navegação
+              
                 document.querySelector('#home-nav-link .nav-link').classList.add('active');
                 document.querySelector('#login-nav-link .nav-link').classList.remove('active');
             }
         } else {
-            // --- USUÁRIO NÃO ESTÁ LOGADO ---
             loginLink.style.display = 'list-item';
             logoutLink.style.display = 'none';
         }
     }
 }
 
-// "Ouve" em tempo real as mudanças de autenticação
+
 supabase.auth.onAuthStateChange((event, session) => {
     const user = session?.user;
     updateUserUI(user);
 });
 
 
-// ===================================================================
-// --- LÓGICA DOS FORMULÁRIOS ---
-// ===================================================================
 
-// --- LÓGICA PARA A PÁGINA DE CADASTRO ---
+
+
 const registrationForm = document.getElementById('registration-form');
 if (registrationForm) {
     registrationForm.addEventListener('submit', async (e) => {
@@ -61,7 +50,7 @@ if (registrationForm) {
             console.error("ERRO CRÍTICO: O elemento com id 'registration-error' não foi encontrado no HTML!");
             return;
         }
-        errorMessage.textContent = ''; // Limpa mensagens antigas
+        errorMessage.textContent = ''; 
 
         const nomeCompleto = document.getElementById('nome-completo').value;
         const email = document.getElementById('email').value;
@@ -114,7 +103,7 @@ if (registrationForm) {
     });
 }
 
-// --- LÓGICA PARA O FORMULÁRIO DE LOGIN ---
+
 const loginForm = document.getElementById('actual-login-form');
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -133,7 +122,7 @@ if (loginForm) {
                     window.location.href = 'admin.html';
                 } else {
                     alert('Login bem-sucedido!');
-                    // O updateUserUI será chamado automaticamente pelo onAuthStateChange
+                   
                 }
             }
         } catch (error) {
@@ -143,7 +132,7 @@ if (loginForm) {
     });
 }
 
-// --- LÓGICA PARA O BOTÃO DE SAIR ---
+
 const logoutButton = document.getElementById('logout-nav-link');
 if(logoutButton) {
     logoutButton.addEventListener('click', async () => {
@@ -152,7 +141,7 @@ if(logoutButton) {
             console.error('Erro ao sair:', error);
             alert('Erro ao sair da conta.');
         } else {
-            // Redireciona para a página inicial para garantir que o estado seja atualizado
+        
             window.location.href = 'index.html';
         }
     });

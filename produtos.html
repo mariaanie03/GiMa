@@ -116,21 +116,19 @@
                     const personalizacao = localStorage.getItem('produtoPersonalizado');
 
                     try {
-                        // --- CONFIGURAÇÃO FINAL ---
-                        // Tabela: 'carrinhos'
-                        // Colunas: id_carrinho, quantidade, id_profile (em vez de user_id)
+                      
                         
                         const { data: itemExistente, error: selectError } = await supabase
                             .from('carrinhos') 
                             .select('id_carrinho, quantidade') 
-                            .eq('id_profile', userId) // <--- ALTERADO PARA id_profile
+                            .eq('id_profile', userId) 
                             .eq('produto_id', produtoId)
                             .maybeSingle(); 
 
                         if (selectError) throw selectError;
 
                         if (itemExistente) {
-                            // Atualiza QUANTIDADE
+                           
                             const novaQuantidade = itemExistente.quantidade + 1;
                             const { error: updateError } = await supabase
                                 .from('carrinhos') 
@@ -139,11 +137,11 @@
                             
                             if (updateError) throw updateError;
                         } else {
-                            // Insere NOVO ITEM
+                           
                             const { error: insertError } = await supabase
                                 .from('carrinhos') 
                                 .insert({
-                                    id_profile: userId, // <--- ALTERADO PARA id_profile
+                                    id_profile: userId, 
                                     produto_id: produtoId,
                                     quantidade: 1, 
                                     customization: personalizacao
@@ -174,7 +172,7 @@
                 const { count, error } = await supabase
                     .from('carrinhos') 
                     .select('*', { count: 'exact', head: true })
-                    .eq('id_profile', session.user.id); // <--- ALTERADO PARA id_profile
+                    .eq('id_profile', session.user.id);
                 
                 const contadorEl = document.getElementById('cart-count');
                 if (contadorEl) {

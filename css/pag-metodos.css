@@ -16,7 +16,7 @@
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
-/* SEÇÃO INFORMATIVA SUPERIOR */
+
 .info-metodos {
     display: flex;
     gap: 20px;
@@ -41,7 +41,7 @@
     line-height: 1.5;
 }
 
-/* NOVA CENTRAL DE PERSONALIZAÇÃO */
+
 .central-personalizacao {
     border-top: 2px solid #f0f0f0;
     padding-top: 30px;
@@ -75,7 +75,7 @@
     color: #555;
 }
 
-/* Estilos para Opção 1 */
+
 .ferramentas-criacao {
     display: flex;
     gap: 15px;
@@ -111,7 +111,7 @@
     background-color: #e0e0e0;
 }
 
-/* Estilos para Galeria (Opção 2) */
+
 #galeria-artes {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -137,7 +137,7 @@
     box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
 }
 
-/* Estilos para Customização (Opção 3) */
+
 .customizacao-final {
     display: flex;
     gap: 20px;
@@ -189,7 +189,7 @@
     border-radius: 4px;
 }
 
-/* BOTÃO FINAL */
+
 #btn-confirmar-personalizacao {
     width: 100%;
     padding: 15px;
@@ -222,7 +222,7 @@
 
 
 
-        /* Estilos gerais da página */
+       
         .central-personalizacao {
             display: flex;
             flex-direction: column;
@@ -243,7 +243,6 @@
             padding: 0 10px;
         }
 
-        /* Estilos do Editor de Desenho */
         #editor-desenho-container {
             display: none; 
             flex-direction: column; 
@@ -303,9 +302,9 @@
             cursor: default;
         }
         
-        /* Estilos para Ferramentas de Texto */
+       
         #text-tools {
-            display: none; /* Inicia oculto */
+            display: none; 
             flex-wrap: wrap;
             gap: 10px;
             align-items: center;

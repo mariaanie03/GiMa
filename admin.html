@@ -10,7 +10,7 @@
 <body>
 
     <div class="container">
-        <!-- SEÇÃO DE LOGIN -->
+
         <section id="admin-login-section">
             <h1>Login do Administrador</h1>
             <form id="admin-login-form">
@@ -20,7 +20,6 @@
             </form>
         </section>
 
-        <!-- PAINEL DE CONTROLE DO ADMIN (ESCONDIDO POR PADRÃO) -->
         <section id="admin-panel-section">
             <button id="logout-btn" class="logout-btn">Sair</button>
             <h1>Painel de Administração</h1>
@@ -39,19 +38,15 @@
 
             <h2>Produtos Atuais</h2>
             <div id="product-list">
-                <!-- A lista de produtos do banco de dados será inserida aqui -->
             </div>
         </section>
     </div>
 
-    <!-- Script do Supabase -->
     <script type="module">
     import { supabase } from './js/supabaseClient.js';
 
-    // --- IMPORTANTE: DEFINA O SEU E-MAIL DE ADMIN AQUI ---
     const ADMIN_EMAIL = 'luanakyo4@gmail.com'; 
 
-    // Referências aos elementos do DOM
     const loginSection = document.getElementById('admin-login-section');
     const panelSection = document.getElementById('admin-panel-section');
     const loadingIndicator = document.getElementById('loading');
@@ -60,7 +55,6 @@
     const addProductForm = document.getElementById('add-product-form');
     const productListContainer = document.getElementById('product-list');
 
-    // --- FUNÇÕES DE CONTROLE DE UI ---
     const showLogin = () => {
         if (loginSection) loginSection.style.display = 'block';
         if (panelSection) panelSection.style.display = 'none';
@@ -72,8 +66,6 @@
         fetchAndDisplayProducts();
     };
 
-    // --- LÓGICA DE AUTENTICAÇÃO ---
-    // Adiciona o listener APENAS se o formulário de login existir
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -85,7 +77,6 @@
         });
     }
 
-    // Adiciona o listener APENAS se o botão de logout existir
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
             await supabase.auth.signOut();
@@ -93,7 +84,7 @@
         });
     }
 
-    // --- VERIFICA O ESTADO DO LOGIN EM TEMPO REAL ---
+  
     supabase.auth.onAuthStateChange((event, session) => {
         if (session?.user && session.user.email === ADMIN_EMAIL) {
             showAdminPanel();
@@ -106,9 +97,9 @@
         }
     });
 
-    // --- LÓGICA DE PRODUTOS ---
+
     async function fetchAndDisplayProducts() {
-        if (!productListContainer) return; // Não faz nada se a lista não existir
+        if (!productListContainer) return; 
 
         const { data: products, error } = await supabase.from('produtos').select('*');
         if (error) {
@@ -133,8 +124,7 @@
         });
     }
 
-    // --- ADICIONAR PRODUTO ---
-    // Adiciona o listener APENAS se o formulário de adicionar produto existir
+
     if (addProductForm) {
         addProductForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -183,8 +173,7 @@
         });
     }
 
-    // --- REMOVER PRODUTO (usando event delegation) ---
-    // Adiciona o listener APENAS se o container da lista existir
+
     if (productListContainer) {
         productListContainer.addEventListener('click', async (e) => {
             if (e.target.classList.contains('delete-btn')) {
