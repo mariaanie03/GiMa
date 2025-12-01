@@ -136,12 +136,20 @@ if (loginForm) {
 const logoutButton = document.getElementById('logout-nav-link');
 if(logoutButton) {
     logoutButton.addEventListener('click', async () => {
+    
         const { error } = await supabase.auth.signOut();
+
         if (error) {
             console.error('Erro ao sair:', error);
-            alert('Erro ao sair da conta.');
+            
+          
+            if (error.message.includes('Auth session missing') || error.status === 403) {
+                window.location.href = 'index.html';
+            } else {
+                alert('Erro ao sair da conta: ' + error.message);
+            }
         } else {
-        
+    
             window.location.href = 'index.html';
         }
     });
